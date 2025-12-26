@@ -1,0 +1,149 @@
+---
+title: "Estadística descriptiva"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Librerías necesarias
+library("modeest")
+library(tidyverse)
+theme_set(theme_classic())
+```
+
+La estadística descriptiva es la encargada del análisis de los datos recopilados mediante el uso de determinados parámetros relevantes y gráficos que describan la situación de los datos.
+
+Partiendo de unos datos ordenados $x = (x_1 , \ldots , x_n)$ los principales parámetros de estudio son los siguientes:
+
+* La **media** se define como $\overline{x} = \dfrac{1}{n}\sum _{i=1} ^n x_i$.
+
+* La **varianza** (*corregida*) se define como $\hat{s}^2 = \dfrac{1}{n-1}\sum _{i=1} ^n (x_i - \overline{x})^2$.
+
+* La **desviación típica** (*corregida*) se define como $\hat{s} = \sqrt{\dfrac{1}{n-1}\sum _{i=1} ^n (x_i - \overline{x})^2}$.
+
+* El **percentil $k\cdot 100 \%$** se define como $x_{i_0}$ con $i_0 = \lceil k\cdot n \rceil$.
+
+* El **primer cuartil** es el percentil $25\%$.
+
+* La **mediana** es el percentil $50\%$.
+
+* El **tercer cuartil** es el percentil $75\%$.
+
+* Una **moda** es un valor $x_{i_0}$ más repetido.
+
+En R se pueden calcular estos parámetros de la siguiente manera:
+
+```{r}
+x = rbinom(100,100,0.5)
+x = sort(x)
+
+# Media
+mean(x)
+
+# Varianza
+var(x)
+
+# Desviación típica
+sd(x)
+
+# Cuartiles
+quantile(x, type = 3)
+
+# Una moda
+as.numeric(names(which.max(table(x))))
+
+# Modas (del paquete modeest)
+mlv(x, method = "mfv")
+```
+
+Para representar gráficamente los datos se puede hacer uso de las funciones base de R, sin embargo, el uso de la librería `ggplot2` resulta de gran utilidad.
+
+## Librería ggplot2
+
+La librería ggplot2 es una herramienta fundamental en el ecosistema de R para la visualización de datos. Desarrollada por Hadley Wickham, ggplot2 se basa en la gramática de gráficos, un concepto que permite construir gráficos de manera sistemática y coherente. Esta librería proporciona una amplia gama de funciones que facilitan la creación de gráficos complejos y estéticamente agradables, permitiendo a los usuarios personalizar cada aspecto de sus visualizaciones. Su flexibilidad y potencia la han convertido en una opción preferida tanto en el ámbito académico como en la industria para el análisis y la presentación de datos.
+
+Para ver las utilidades de ggplot2 utilizaremos la siguiente base de datos:
+
+```{r}
+data = mpg
+```
+
+Interpreta las siguientes líneas de código:
+
+```{r}
+# Capa inicial
+ggplot()
+
+# Añadimos el data.frame sobre el que vamos a trabajar y declaramos los ejes
+ggplot(data, aes(x = displ, y = hwy))
+
+# Añadimos una capa nueva
+ggplot(data, aes(x = displ, y = hwy))+
+  geom_point() # Gráfico de dispersión
+```
+
+Realiza un gráfico de dispersión entre el número de cilindros y el consumo en carretera. ¿Observas algún problema?
+
+```{r}
+ggplot(data, aes(x = cyl, y = hwy))+
+  geom_point() # Gráfico de dispersión
+```
+
+Prueba a cambiar la capa `geom_point()` por `geom_boxplot()`:
+
+```{r}
+ggplot(data, aes(x = cyl, y = hwy))+
+  geom_boxplot() # Capa en forma de boxplots
+```
+
+¿Observas algún problema? ¡Hay que factorizar la variable discreta!:
+
+```{r}
+# Convertimos en factor
+data$cyl = as.factor(data$cyl)
+
+# Gráfica
+ggplot(data, aes(x = cyl, y = hwy))+
+  geom_boxplot()
+```
+
+Ahora vamos a utilizar otro dataset para introducir otro tipo de capas en ggplot2:
+
+```{r}
+data = diamonds
+```
+
+¿Cuántos diamantes hay para cada tipo de corte? Para responder a esta pregunta utilizaremos un gráfico de barras.
+
+```{r}
+ggplot(data, aes(x = cut, fill = cut))+
+  geom_bar()
+```
+
+Podemos ver que hay 20mil diamantes con corte Ideal. Además, el argumento `fill` sirve para rellenar cada barra del color correspondiente a cada nivel. ¿Cómo distinguir en cada barra según claridad (discreta)?
+
+```{r}
+ggplot(data, aes(x = cut, fill = clarity))+
+  geom_bar()
+
+# Otra disposición útil:
+ggplot(data, aes(x = cut, fill = clarity))+
+  geom_bar(position = "dodge")
+```
+
+Para finalizar, veamos como responder a una pregunta similar pero con una variable continua. ¿Cuántos diamantes hay para cada precio? En este caso, es mejor utilizar un histograma.
+
+```{r}
+ggplot(data, aes(x = price)) +
+	geom_histogram(color = "white", fill = "gray")
+```
+
+¿Qué función de densidad puede tener asociada la variable `price`?
+
+```{r}
+ggplot(data, aes(x = price)) +
+	geom_density()
+```
+
+En general, la librería ggplot2 ofrece mucha versatilidad. Visita esta [página](https://r-charts.com/es/) para aprender más sobre ggplot2.
