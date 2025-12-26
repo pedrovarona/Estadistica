@@ -1,0 +1,169 @@
+---
+title: "Parámetros estadísticos"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introducción teórica.
+
+Sea $X$ una variable aleatoria con función de distribución $F$ y función de densidad $f$, se definen los siguientes conceptos:
+
+* Una **moda** es un máximo global de $f$.
+
+* La **mediana** es $\min \{ x \, : \, F(x) \geq \frac{1}{2} \}$.
+
+* El **$\alpha$-cuantil** es $\min \{ x \, : \, F(x) \geq \alpha \}$.
+
+* La **esperanza** de una variable **discreta** es $E[X] = \sum _{-\infty} ^\infty xf(x)$.
+
+* La **esperanza** de una variable **continua** es $E[X] = \int _{-\infty} ^\infty xf(x) dx$.
+
+**Teorema** (Ley de los grandes números). Sea $(X_k )_{k\in\mathbb{N}}$ una sucesión de variables aleatorias *idénticamente distribuidas*, *independientes* y con la misma esperanza $\mu < \infty$. Entonces:
+
+$$ \overline{X}_n = \frac{1}{n} \sum _{k=1} ^n X_k \to \mu \text{ (convergencia casi segura)} $$
+
+**Proposición**. Dadas dos variables aleatorias $X$ e $Y$. Para todo $c\in\mathbb{R}$ se tiene que:
+
+* $E[cX] = cE[X]$
+
+* $E[X+Y] = E[X] + E[Y]$
+
+* Si $X$ e $Y$ son independientes, entonces $E[X\cdot Y] = E[X]\cdot E[Y]$
+
+**Teorema** (Ley del estadístico inconsciente). Sea $X$ una variable aleatoria y $g$ una función entonces:
+
+* Si $X$ es discreta $E[g(X)] = \sum _{-\infty} ^\infty g(x)f(x)$
+
+* Si $X$ es continua $E[g(X)] = \int _{-\infty} ^\infty g(x)f(x) dx$
+
+Se define el **momento $k$-ésimo** de una variable aleatoria como:
+
+$$ \alpha _k = E[X^k] $$
+
+Si $\mu$ es la esperanza de una variable aleatoria, se define su **momento centrado $k$-ésimo** como:
+
+$$ \mu _k = E[(X-\mu)^k] $$
+
+Generalmente, se utiliza la notación de $\mu$ para la esperanza, $\sigma ^2$ para la varianza (momento centrado 2-ésimo) y $\sigma$ para la desviación típica (raíz cuadrada de la varianza).
+
+**Proposición**. Dadas dos variables aleatorias $X$ e $Y$. Para todo $c\in\mathbb{R}$ se tiene que:
+
+* $Var[X] = E[X^2] - E[X]^2$
+
+* $Var[cX] = c^2 Var[X]$
+
+* Si $X$ e $Y$ son independientes, entonces $Var[X+Y] = Var[X] + Var[Y]$
+
+## Ejercicios
+
+Calcular la esperanza de $X=$ "nº de caras obtenidas al lanzar 100 monedas".
+
+```{r}
+# Función de densidad.
+fx = function(x){
+  ifelse(x %in% 0:100, 1/2^100 * choose(100,x) , 0)
+}
+
+x = 0:100
+sum(x*fx(x))
+```
+
+Un jugador gana 1 euro si al tirar un dado obtiene un 1 o un 3; pierde 2 euros si sale un 2, 4, 6; y gana 4 euros si sale un 5. ¿Cuál es la ganancia esperada? ¿Jugarías a este juego?
+
+```{r}
+# Primero determina la función de densidad de X = "Ganancia obtenida en el juego"
+fx = function(x){
+  if (x == -2){
+    1/2
+  }else if(x == 1){
+    1/3
+  }else if (x == 4){
+    1/6
+  }else{
+    0
+  }
+}
+fx = Vectorize(fx)
+
+# Calcula la esperanza
+x = c(-2,1,4)
+sum(x*fx(x))
+```
+
+Realiza una simulación del juego para calcular la esperanza mediante la ley de los grandes números:
+
+```{r}
+# Número de simulaciones
+N = 1000
+
+# Realizamos N simulaciones
+experimentos = replicate(N,{
+	# Lanzamos  dado
+	dado = sample(1:6,1)
+	
+	# Valores de X:
+	if (dado == 1 || dado == 3){
+		x = 1
+	}else if (dado == 5){
+		x = 4
+	}else{
+		x = -2
+	}
+	x # Return valor de nuestra v.a. X
+})
+
+# Aproximamos la esperanza
+mean(experimentos)
+```
+
+La policía arresta a dos sospechosos. No hay pruebas suficientes para condenarlos y, tras haberlos separado, los visita a cada uno y les ofrece el mismo trato. Si uno confiesa y su cómplice no, el cómplice será condenado a la pena total, diez años, y el primero será liberado. Si uno calla y el cómplice confiesa, el primero recibirá esa pena y será el cómplice quien salga libre. Si ambos confiesan, ambos serán condenados a seis años. Si ambos lo niegan, todo lo que podrán hacer será encerrarlos durante un año por un cargo menor.
+
+* En primer lugar, definimos la variable aleatoria $X=$ "nº de años de condena" considerando que $p$ es la probabilidad de que tú mientas y $q$ la probabilidad de que tu cómplice mienta. La función de densidad es:
+
+$$ f(x) = \begin{cases} 
+q(1-p) & \text{ si } x = 0 \\
+pq & \text{ si } x = 1 \\
+(1-q)(1-p) & \text{ si } x = 6 \\
+(1-q)p & \text{ si } x = 10 
+\end{cases} $$
+
+* Calculamos la esperanza en función de $p$ para poder tomar una decisión:
+
+$$ E[X] = \begin{cases} 
+6 - 6q & \text{ si } p = 0 \\
+10 - 9q & \text{ si } p = 1 
+\end{cases} $$
+
+Como el valor esperado es siempre menor cuando $p=0$, la mejor opción es confesar.
+
+Se realizan lanzamientos sucesivos de una moneda hasta que salga cruz por primera vez. Entonces se detiene el juego, se cuenta el número de lanzamientos que se han producido, supongamos que han sido 𝑛. Entonces, el jugador obtiene 2^𝑛 monedas. ¿Cuánto pagarías por jugar a este juego? **Intenta resolver el problema con simulaciones**
+
+```{r}
+# Número de simulaciones
+N = 1000
+
+experimentos = replicate(N,{
+	# Condiciones iniciales
+	moneda = 0
+	n = 0
+	
+	# Lanzamos  moneda
+	while (moneda == 0){
+		moneda = sample(0:1,1)
+		n = n + 1
+	}
+	
+	# Ganancias obtenidas
+	2^n
+})
+
+# Aproximamos la esperanza
+mean(experimentos)
+```
+
+¿Resultados extraños? ¿Por qué? 
+
+Sí, no se puede aplicar la ley de los grandes números porque la esperanza es infinita...

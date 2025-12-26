@@ -1,0 +1,271 @@
+---
+title: "Distribuciones notables"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+Diremos que dos variables aleatorias $X$ e $Y$ son equivalentes si tienen la misma función de densidad *en casi todo punto*. Lo denotaremos por $X \sim Y$.
+
+# Distribuciones notables discretas.
+
+## Distribución de Bernoulli.
+
+Sea $p\in [0,1]$, diremos que $X \sim Ber(p)$ si su función de densidad es:
+
+$$ f(x) = \begin{cases} p & \text{ si } x = 1 \\ 1-p & \text{ si } x = 0\\ 0 & \text{ en otro caso} \end{cases} $$
+
+**Esperanza y varianza**:
+
+$$ \begin{cases} \mu = p \\ \sigma ^2 = (1-p)p \end{cases} $$
+
+**Ejemplo**: $X =$ "número de caras obtenidas al lanzar una moneda al aire con probabilidad de cara $p$".
+
+En general, una variable de Bernoulli tiene el siguiente aspecto; $X=$ "1 en caso de éxito y 0 en caso de fracaso".
+
+## Distribución Binomial.
+
+Sea $p\in [0,1]$ y $n\in\mathbb{N}$, diremos que $X \sim \mathcal{B}(n,p)$ si su función de densidad es:
+
+$$ f(x) = \begin{cases} \binom{n}{x} p^x (1-p)^{n-x} & \text{ si } x \in\{0, 1, \ldots , n\} \\ 0 & \text{ en otro caso }\end{cases} $$
+
+**Esperanza y varianza**:
+
+$$ \begin{cases} \mu = np \\ \sigma ^2 = n(1-p)p \end{cases} $$
+
+**Ejemplo**: $X =$ "número de caras obtenidas al lanzar $n$ monedas al aire con probabilidad de cara $p$".
+
+Una variable binomial es en realidad una suma de $n$ variables de bernoulli independientes. En general, una variable con distribución binomial tiene el siguiente aspecto; $X =$ "nº de éxitos obtenidos al realizar $n$ eventos de bernoulli con probabilidad $p$".
+
+Utiliza `dbinom()` para representar gráficamente $\mathcal{B}(n=40,p=0.65)$.
+
+```{r}
+#x = 0:40
+#y = dbinom(??????)
+#plot(x,y,type = "h")
+```
+
+Utiliza `pbinom()` para calcular la probabilidad de obtener al menos 25 caras al lanzar 100 monedas al aire.
+
+```{r}
+# P(X >= 25) = 1 - P(X < 25) = 1 - P(X<=24)
+# ?????????
+```
+
+Utiliza `qbinom()` para calcular el numero de caras a obtener como mínimo en un lanzamiento de 100 monedas para que la probabilidad de obtener ese número de caras sea 0.5 o más.
+
+```{r}
+# ???????
+```
+
+Utiliza `rbinom()` para obtener una muestra aleatoria de $\mathcal{B}(n=67,p=0.45)$.
+
+```{r}
+# ???????
+```
+
+## Distribución geométrica.
+
+Sea $p\in [0,1]$, diremos que $X \sim Geom(p)$ si su función de densidad es:
+
+$$ f(x) = \begin{cases} (1-p)^x p & \text{ si } x \in\{0, 1, 2, \ldots \} \\ 0 & \text{ en otro caso }\end{cases} $$
+
+**Esperanza y varianza**:
+
+$$ \begin{cases} \mu = \dfrac{1-p}{p} \\ \sigma ^2 = \dfrac{1-p}{p^2} \end{cases} $$
+
+**Ejemplo**: $X =$ "número de cruces obtenidas al lanzar una moneda al aire con probabilidad de cara $p$ hasta obtener una cara".
+
+En general, una variable con distribución geométrica tiene el siguiente aspecto; $X =$ "nº de fracasos obtenidos al realizar consecutivamente eventos de bernoulli con probabilidad $p$ hasta obtener un éxito".
+
+Utiliza `dgeom()` para representar gráficamente $Geom(p=0.35)$.
+
+```{r}
+#x = 0:10
+#y = dgeom(????)
+#plot(x,y,type = "h")
+```
+
+Al igual que con otras distribuciones, tenemos a nuestra disposición `pgeom()`, `qgeom()` y `rgeom()`.
+
+## Distribución binomial negativa.
+
+Sea $p\in [0,1]$ y $r\in\mathbb{N}$, diremos que $X \sim \mathcal{NB}(r,p)$ si su función de densidad es:
+
+$$ f(x) = \begin{cases} \binom{r+x-1}{r-1}(1-p)^x p^r & \text{ si } x \in\{0, 1, 2, \ldots \} \\ 0 & \text{ en otro caso }\end{cases} $$
+
+**Esperanza y varianza**:
+
+$$ \begin{cases} \mu = \dfrac{1-p}{p}r \\ \sigma ^2 = \dfrac{1-p}{p^2}r \end{cases} $$
+
+**Ejemplo**: $X =$ "número de cruces obtenidas al lanzar una moneda al aire con probabilidad de cara $p$ hasta obtener $r$ caras".
+
+En general, una variable con distribución binomial negativa tiene el siguiente aspecto; $X =$ "nº de fracasos obtenidos al realizar consecutivamente eventos de bernoulli con probabilidad $p$ hasta obtener $r$ éxitos".
+
+Utiliza `dnbinom()` para representar gráficamente $\mathcal{NB}(r = 4, p=0.35)$.
+
+```{r}
+#x = 0:50
+#y = dnbinom(?????)
+#plot(x,y,type = "h")
+```
+
+Al igual que con otras distribuciones, tenemos a nuestra disposición `pnbinom()`, `qnbinom()` y `rnbinom()`.
+
+## Distribución hipergeométrica.
+
+Sean $m,n,k \in \mathbb{N}$, diremos que $X \sim HGeom(m,n,k)$ si su función de densidad es:
+
+$$ f(x) = \begin{cases} \dfrac{\binom{m}{x}\binom{n}{k-x}}{\binom{m+n}{k}} & \text{ si } x \in\{0, 1, \ldots, k \} \\ 0 & \text{ en otro caso }\end{cases} $$
+
+**Esperanza y varianza**:
+
+$$ \begin{cases} \mu = \dfrac{m}{m+n}\cdot k \\ \sigma ^2 = \dfrac{m+n-k}{m+n-1} \cdot \dfrac{m}{m+n} \cdot \dfrac{n}{m+n} \cdot k \end{cases} $$
+
+**Ejemplo**: $X =$ "número de bolas blancas obtenidas al extraer $k$ bolas de una caja con $m$ bolas blancas y $n$ bolas negras".
+
+Utiliza `dhyper()` para representar gráficamente $Hgeom(m = 4, n = 5, k = 3)$.
+
+```{r}
+#x = 0:4
+#y = dhyper(????)
+#plot(x,y,type = "h")
+```
+
+Al igual que con otras distribuciones, tenemos a nuestra disposición `phyper()`, `qhyper()` y `rhyper()`.
+
+## Distribución de Poisson.
+
+Sean $\lambda > 0$, diremos que $X \sim \mathcal{P}(\lambda)$ si su función de densidad es:
+
+$$ f(x) = \begin{cases} \dfrac{e^{-\lambda} \lambda ^x}{x!} & \text{ si } x \in\{0, 1, 2, \ldots \} \\ 0 & \text{ en otro caso }\end{cases} $$
+
+**Esperanza y varianza**:
+
+$$ \begin{cases} \mu = \lambda \\ \sigma ^2 = \lambda \end{cases} $$
+
+**Ejemplo**: $X =$ "nº de errores cometidos en un párrafo sabiendo que se cometen 2 fallos/párrafo de media".
+
+En general, una variable de Poisson sigue la estructura $X=$ "nº de eventos ocurridos en un dominio sabiendo que de media se cometen $\lambda$ ocurrencias/dominio", el dominio puede ser tiempo o espacio. Se suele modelar con distribuciones de poisson errores de ortografía, llamadas por minuto en una central, accesos a una web por minuto, mutaciones ADN, número de estrellas en un espacio del cielo, inventiva de un científico, etc.
+
+Utiliza `dpois()` para representar gráficamente $\mathcal{P}(2)$.
+
+```{r}
+#x = 0:10
+#y = dpois(?????)
+#plot(x,y,type = "h")
+```
+
+Al igual que con otras distribuciones, tenemos a nuestra disposición `ppois()`, `qpois()` y `rpois()`.
+
+# Distribuciones notables continuas.
+
+## Distribución uniforme
+
+Sean $a < b$, diremos que $X \sim \mathcal{U}(a,b)$ si su función de densidad es:
+
+$$ f(x) = \begin{cases} \dfrac{1}{b-a} & \text{ si } x \in (a,b) \\ 0 & \text{ en otro caso }\end{cases} $$
+
+**Esperanza y varianza**:
+
+$$ \begin{cases} \mu = \dfrac{a+b}{2} \\ \sigma ^2 = \dfrac{(b-a)^2}{12} \end{cases} $$
+
+**Ejemplo**: $X =$ "nº al azar entre 0 y 1 (teniendo todos la misma probabilidad)".
+
+Utiliza `dunif()` para representar gráficamente la función de densidad de $\mathcal{U}(-1,1)$.
+
+```{r}
+#x = seq(-2,2,by=0.01)
+#y = dunif(?????)
+#plot(x,y,type = "l")
+```
+
+Al igual que con otras distribuciones, tenemos a nuestra disposición `punif()`, `qunif()` y `runif`()`.
+
+## Distribución normal.
+
+Sean $\mu, \sigma\in\mathbb{R}$, diremos que $X \sim \mathcal{N}(\mu,\sigma^2)$ si su función de densidad es:
+
+$$ f(x) = \dfrac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma ^2}} $$
+
+**Esperanza y varianza**: Quedan determinadas por los parámetros de la distribución, su esperanza es $\mu$ y su varianza es $\sigma ^2$.
+
+**Ejemplo**: $X =$ "Peso de una persona en una población de peso medio 75kg y desviación típica 5kg".
+
+La distribución normal agrupa simétricamente los datos entorno a la media $\mu$ con una desviación $\sigma$. La distribución normal se suele utilizar para modelizar la estatura, el peso, el cociente intelectual, el ruido en telecomunicaciones, errores de medición, etc.
+
+Utiliza `dnorm()` para representar gráficamente la función de densidad de $\mathcal{N}(75,25)$.
+
+```{r}
+#x = seq(0,150,by=0.01)
+#y = dnorm(?????)
+#plot(x,y,type = "l")
+```
+
+Al igual que con otras distribuciones, tenemos a nuestra disposición `pnorm()`, `qnorm()` y `rnorm()`.
+
+**Teorema del límite central**. Sean $X_1, \ldots , X_n$ variables aleatorias idénticamente distribuidas e independientes con misma media $\mu$ y misma varianza $\sigma ^2 < \infty$. Para un $n$ *suficientemente grande* se tiene que:
+
+$$ X_1 + \cdots + X_n \sim \mathcal{N}(n\mu, n\sigma ^2) $$
+
+**Aplicación del TLC**. Si $X\sim \mathcal{B}(n,p)$, entonces $X \sim X_1 + \cdots + X_n$ con $X_i \sim Ber (p)$. Por lo tanto, aplicando el TLC suponiendo un $n$ suficientemente grande:
+
+$$ X \sim \mathcal{N} (np, n(1-p)p) $$
+
+Sea $X \sim B(n,p)$, como $$ X = X_1 + \cdots + X_n $$ para $X_i \sim Ber(p)$ y la distribución de Bernouilli tiene esperanza $p$ y varianza $p(1-p)$, entonces para $n$ grande, por el TCL, podemos considerar:
+
+$$ X \sim N(np, np(1-p)) $$
+
+Representa gráficamente ambas funciones de densidad para $n = 30$ y $p=0.5$.
+
+```{r}
+n = 30
+p = 0.5
+
+# Binomial (discreta)
+plot(0:n, dbinom(0:n, size = n, prob=p), type = "h")
+
+# Normal (continua)
+x = seq(0, 30, by = 0.01)
+y = dnorm(x, mean = n*p, sd = sqrt(n*(1-p)*p))
+lines(x, y)
+```
+
+Las siguientes propiedades son resultado directo de las propiedades de la esperanza y la varianza.
+
+**Propiedad reproductiva**. Sean $X\sim \mathcal{N}(\mu _1, \sigma_1^2)$ e $Y\sim\mathcal{N}(\mu _2, \sigma_2^2)$ dos variables aleatorias normales e independientes con varianzas finitas, entonces:
+
+$$ X + Y \sim \mathcal{N}(\mu _1 + \mu _2 , \sigma _1 ^2 + \sigma _2 ^2) $$
+
+**¡OJO!**, la desviación típica será $\sqrt{\sigma_1 ^2 + \sigma _2 ^2}$.
+
+**Proposición**. Sean $a,b\in\mathbb{R}$ y $X\sim \mathcal{N}(\mu, \sigma ^2)$, entonces:
+
+$$ aX + b \sim \mathcal{N}(a\mu + b, a^2 \sigma ^2) $$
+
+## Distribución exponencial.
+
+Sean $\lambda > 0$, diremos que $X \sim Exp(\lambda)$ si su función de densidad es:
+
+$$ f(x) = \begin{cases} \lambda e^{-\lambda x} & \text{ si } x > 0 \\ 0 & \text{ en otro caso }\end{cases} $$
+
+**Esperanza y varianza**:
+
+$$ \begin{cases} \mu = \dfrac{1}{\lambda} \\ \sigma ^2 = \dfrac{1}{\lambda ^2} \end{cases} $$
+
+**Ejemplo**: $X =$ "Tiempo entre llamadas en un call center que recibe llamadas de media cada 5 minutos".
+
+En general, una variable con distribución exponencial tiene la siguiente estructura; $X=$ "Medida entre sucesos cuando la media de esa medida es $\lambda$". Se suele utilizar la distribución exponencial para modelar el tiempo entre llamadas de un call-center, el tiempo entre terremotos, el tiempo de fallo en sistemas electrónicos, el máximo mensual de precipitaciones, etc.
+
+Utiliza `dexp()` para representar gráficamente la función de densidad de $Exp(5)$.
+
+```{r}
+#x = seq(-1,10,by=0.01)
+#y = dexp(?????)
+#plot(x,y,type = "l")
+```
+
+Al igual que con otras distribuciones, tenemos a nuestra disposición `pexp()`, `qexp()` y `rexp()`.

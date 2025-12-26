@@ -1,0 +1,285 @@
+---
+title: "Intro a R"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, out.width="50%", fig.align = "center")
+```
+
+El objetivo de este cuaderno (**markdown**) es hacer una introducción práctica a **R** mediante la resolución de un problema motivante.
+
+## Tipos de datos e indexación.
+
+Empezaremos guardando datos en **arrays**, para ello escribimos las siguientes líneas de código:
+
+```{r}
+paises = c("Alemania", "Italia", "Portugal", "España")
+casos = c(1337078, 1843712, 348744, 1730575)
+```
+
+Veamos como acceder a una posición en particular de cada array:
+
+```{r}
+paises[3]
+casos[3]
+```
+
+Ahora prueba tú a acceder a los datos de España:
+
+```{r}
+paises[4]
+casos[4]
+```
+
+¿Cómo accedemos a los datos de Alemania y España?
+
+```{r}
+paises[c(1,4)]
+casos[c(1,4)]
+```
+
+¿Cómo accedemos a los datos desde Italia hasta España?
+
+```{r}
+paises[2:4]
+casos[2:4]
+```
+
+Ahora vamos a probar a guardar los datos en un solo array. Para ello utilizamos `names()`, ejecuta la siguiente línea de código. ¿Qué observas?
+
+```{r}
+names(casos)
+```
+
+¿Y ahora?
+
+```{r}
+names(casos) = paises
+names(casos)
+casos["España"]
+```
+
+¿Cómo accedemos a los datos de Alemania y España?
+
+```{r}
+casos[c("Alemania","España")]
+```
+
+Muestra la tabla completa:
+
+```{r}
+casos
+names(casos) = NULL # Eliminamos las etiquetas para los próximos ejercicios.
+```
+
+Por último, vamos ha hacer uso de los `data.frame`, será la estructura más utilizada en el manejo de datos. Empezamos creando un data.frame:
+
+```{r}
+df = data.frame(
+  "nombre_del_pais" = paises,
+  "numero_de_casos" = casos
+)
+```
+
+Muestra por pantalla el data.frame:
+
+```{r}
+df
+```
+
+Accede a columnas, por ejemplo, la segunda columna:
+
+```{r}
+df[,2]
+```
+
+Accede a filas, por ejemplo, la tercera fila:
+
+```{r}
+df[3,]
+```
+
+Pero también se puede acceder a las columnas por su nombre utilizando `$`:
+
+```{r}
+df$numero_de_casos
+```
+
+Con `$` obtenemos la columna en su formato, por ejemplo, en este caso hemos obtenido un array numérico, sobre el cual podemos acceder a su vez a la segunda posición (casos de Italia):
+
+```{r}
+df$numero_de_casos[2]
+```
+
+De hecho, dentro del operador `[]` se pueden introducir sentencias lógicas para obtener las posiciones del array que hagan verdadera la sentencia. Por ejemplo:
+
+```{r}
+df$numero_de_casos[df$nombre_del_pais == "Italia"]
+```
+
+Con `colnames()` se puede acceder a los nombres de un data.frame, y de hecho, se pueden renombrar las columnas:
+
+```{r}
+colnames(df) = c("pais","casos")
+df # Mostramos por pantalla el data.frame
+```
+
+## Lectura y manipulación de datos.
+
+En R se pueden importar archivos de datos para obtener un data.frame a partir de archivos externos. Por ejemplo:
+
+```{r}
+data = read.csv("covid.csv")
+head(data) # Mostramos unos pocos
+```
+
+Crea un nuevo data.frame que contenga solo las columnas `day`, `month`, `year`, `cases`, `deaths`, `countriesAndTerritories` y la última columna.
+
+```{r}
+new_data = data[,c(2:7,12)]
+```
+
+Además, renombra las dos últimas columnas:
+
+```{r}
+colnames(new_data)[6:7] = c("country","cumul_rate")
+```
+
+Prueba a exportar el nuevo data.frame:
+
+```{r}
+write.csv(new_data, "new_covid.csv", row.names = F)
+```
+
+Crea una nueva columna utilizando la siguiente fórmula:
+
+$$ \text{time} = \text{day} + 30(\text{month}-1) + 365(\text{year} - 2019) $$
+
+```{r}
+new_data$time = new_data$day + (new_data$month - 1) * 30 + (new_data$year - 2019) * 365
+```
+
+Elimina las columnas `day`, `month` y `year`:
+
+```{r}
+new_data = new_data[, 4:ncol(new_data)] 
+```
+
+Crea un nuevo data.frame con los datos de "Spain":
+
+```{r}
+spain = new_data[new_data$country == "Spain", ]
+```
+
+Realiza una gráfica a lo largo del tiempo para el ratio de acumulación en España:
+
+```{r}
+plot(spain$time, spain$cumul_rate,   # (eje X, eje Y)
+     type = 'l',                     # Tipo de gráfica
+     xlab = 'Days from 1/1/2019',    # Etiqueta del eje x
+     ylab = 'Cumulative rate',       # Etiqueta del eje y
+     main = 'Covid-19',              # Título     
+     ylim = c(0, 1000))              # Tamaño del alto
+```
+
+Crea otro data.frame para Portugal y añádelo a la gráfica de España:
+
+```{r}
+portugal = new_data[new_data$country == "Portugal", ]
+
+# Gráfica inicial:
+plot(spain$time, spain$cumul_rate,
+     type = 'l',
+     xlab = 'Days from 1/1/2019',
+     ylab = 'Cumulative rate',
+     main = 'Covid-19',   
+     ylim = c(0, 1000))
+
+# Añadimos la gráfica de portugal:
+points(portugal$time, portugal$cumul_rate,
+       type = 'l',                   # Tipo de gráfica
+       col = 2,                      # Indica color del borde       
+       lty = 2)                      # Indica tipo de línea
+
+# Añadimos leyendas:
+legend('topleft',             # Indica la posición       
+       c('Spain', 'Portugal'),       # Indica las leyendas       
+       col = c(1, 2),                # Indica colores       
+       lty = c(1, 2))                # Indica tipo de líneas
+```
+
+Utiliza un bucle `for` para añadir las gráficas de España, Portugal, Italia, Francia y Alemania:
+
+```{r}
+countries = c("Spain", "Portugal", "Italy", "France", "Germany") 
+col_counter = 1
+
+for (country in countries){  
+	plot_data = new_data[new_data$country == country, ] 
+	
+	if (col_counter == 1) {
+	  # Gráfica inicial
+		plot(plot_data$time, plot_data$cumul_rate, 
+		     type = "l", 
+		     xlab = "Days from 1/1/2019", 
+		     ylab = "Cumulative rate", 
+		     main = 'Covid-19', 
+		     lwd = 2, 
+		     ylim = c(0, 1000))  
+	} else {
+	  # Añadimos gráficas
+		points(plot_data$time, plot_data$cumul_rate, 
+		       type = "l", 
+		       lty = 	col_counter, 
+		       col = col_counter, 
+		       lwd = 2)   
+	}  
+	col_counter = col_counter + 1  
+}
+legend('topleft', 
+       legend = countries, 
+       col = 1:length(countries), 
+       lty = 1:length(countries), 
+       lwd = 2)
+```
+
+## Funciones y sapply.
+
+Genera una función en R cuyas entradas sean un data.frame (el de casos covid) y un nombres de país, la salida de la función será el número total de casos hasta la fecha:
+
+```{r}
+count_cases_in_country = function(df, country){ 
+  data_by_country = df[df$country == country,] 
+  sum(data_by_country$cases) # Salida (return)
+}
+```
+
+Prueba con "Spain":
+
+```{r}
+count_cases_in_country(new_data, "Spain")
+```
+
+Mediante un bucle `for` genera un array `results` que contenga el número total de casos de covid en España, Portugal, Italia, Francia y Alemania:
+
+```{r}
+results = c()
+for (country in countries) {
+  new_result = count_cases_in_country(new_data,country)
+  results = c(results, new_result)
+}
+names(results) = countries
+results
+```
+
+¿Podemos evitar el uso de `for`? ¡Si!, basta con utilizar `sapply`:
+
+```{r}
+results = sapply(
+  countries, # Vector o lista
+  function(x) count_cases_in_country(new_data,x) # Función a ser aplicada
+)
+results
+```
+

@@ -1,0 +1,164 @@
+---
+title: "Probabilidad"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Simulaciones. Métodos Monte-Carlo.
+
+Los métodos Monte Carlo constituyen una clase de algoritmos computacionales que se basan en el uso de muestras aleatorias para obtener resultados numéricos. Estos métodos se emplean ampliamente en diversas disciplinas científicas y de ingeniería para resolver problemas que pueden ser determinísticos en principio, pero que son difíciles de abordar mediante técnicas analíticas tradicionales.
+
+El nombre "Monte Carlo" se deriva del famoso casino en Mónaco, reflejando la naturaleza aleatoria y probabilística de estos métodos. En esencia, los métodos Monte Carlo utilizan simulaciones repetidas para modelar la probabilidad de diferentes resultados en un proceso que no puede ser fácilmente predicho debido a la intervención de variables aleatorias.
+
+## Ejercicios.
+
+Calcula mediante simulaciones la probabilidad de obtener cara al lanzar una moneda.
+
+```{r}
+# Número de experimentos
+N = 100000
+
+# Realizamos N simulaciones
+experimentos = replicate(N,{
+  # Lanzamos una moneda al aire
+  moneda = sample(0:1,1)
+  
+  # Comprobamos nuestro evento
+  moneda == 1
+})
+
+# Aproximamos la probabilidad
+p = mean(experimentos)
+
+print(paste0("Probabilidad simulada: ",p))
+```
+
+¿Cuál es la probabilidad de sacar 25 caras en 50 tiradas de una moneda?
+
+```{r}
+# Número de experimentos
+N = 100
+
+# Realizamos N simulaciones
+experimentos = replicate(N,{
+  # Generamos nuestro experimento
+  # ???????
+  
+  # Comprobamos nuestro evento
+  # ???????
+})
+
+# Aproximamos la probabilidad
+p = mean(experimentos)
+
+print(paste0("Probabilidad simulada: ",p))
+```
+
+Se extraen tres cartas de una baraja española. ¿Cuál es la probabilidad de obtener una pareja?
+
+```{r}
+# Primero generamos la baraja
+baraja= paste0(c("E", "B", "C", "O"), rep(1:10, each = 4))
+
+# Establecemos el número de simulaciones
+N = 10000
+
+# Estructura de las simulaciones:
+experimentos = replicate(N,{
+  # Generamos nuestro experimento
+  mano = sample(baraja, 3)
+  
+  # Comprobamos nuestro evento
+  mano = substr(mano, 2, 3)
+  mano = factor(mano,levels = 1:10)
+  any(table(mano) == 2)
+})
+
+# Aproximamos la probabilidad
+p = mean(experimentos)
+
+print(paste0("Probabilidad simulada: ",p))
+```
+
+Se reparten 5 cartas de una baraja española. ¿Cuál es la probabilidad de obtener tres espadas y dos copas?
+
+```{r}
+# Primero generamos la baraja
+baraja = paste0(c("E", "B", "C", "O"), rep(1:10, 4))
+
+# Establecemos el número de simulaciones
+N = 10000
+
+# Estructura de las simulaciones:
+experimentos = replicate(N,{
+  # Generamos nuestro experimento
+  mano = sample(baraja, 5)
+  mano = substr(mano, start = 1, stop = 1)
+  mano = factor(mano, levels = c('A', 'B', 'C', 'D'))
+  
+  mano = table(mano)
+  
+  # Comprobamos nuestro evento
+  (mano['A'] == 3) & (mano['B'] == 2)
+})
+
+# Aproximamos la probabilidad
+p = mean(experimentos)
+
+print(paste0("Probabilidad simulada: ",p))
+```
+
+En una urna hay 3 bolas rojas numeradas del 1 al 3 y 3 bolas negras numeradas del 1 al 3. Sacamos dos bolas, ¿Probabilidad de sacar dos treses?
+
+```{r}
+# Primero generamos la urna
+urna = paste0(c("R1", "R2", "R3", "N1", "N2", "N3"))
+
+# Establecemos el número de simulaciones
+N = 1000
+
+# Estructura de las simulaciones:
+experimentos = replicate(N,{
+  # Generamos nuestro experimento
+  bolas_sacadas = sample(urna, 2)
+
+  # Comprobamos nuestro evento
+  bolas_sacadas = substr(bolas_sacadas, start = 2, stop = 2)
+  #bolas_sacadas = factor(bolas_sacadas, levels = 1:3)
+  #bolas_sacadas = table(bolas_sacadas)
+  all(bolas_sacadas == 2)
+})
+
+# Aproximamos la probabilidad
+p = mean(experimentos)
+
+print(paste0("Probabilidad simulada: ",p))
+```
+
+10 parejas de hermanos se han apuntado a fútbol. Si se hace un equipo de 8 personas al azar, ¿Cuál es la probabilidad de que no haya hermanos en el equipo?
+
+```{r}
+# Primero generamos la plantilla
+plantilla = paste0(c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J"), rep(1:2, 10))
+
+
+# Establecemos el número de simulaciones
+N = 1000
+
+# Estructura de las simulaciones:
+experimentos = replicate(N,{
+  # Generamos nuestro experimento
+  # ???????
+  
+  # Comprobamos nuestro evento
+  # ???????
+})
+
+# Aproximamos la probabilidad
+p = 1-mean(experimentos)
+
+print(paste0("Probabilidad simulada: ",p))
+```

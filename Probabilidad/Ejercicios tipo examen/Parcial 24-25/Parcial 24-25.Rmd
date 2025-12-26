@@ -1,0 +1,181 @@
+---
+title: "Parcial 24-25"
+author: "Pedro Varona"
+date: "2025-10-26"
+output: html_document
+---
+ 1.1. (3 puntos) (40 minutos) La probabilidad de que desde un huevo nazca un insecto es p = 0.35. En una
+ f
+ lor, el n´umero de huevos puestos por estos insectos sigue una distribuci´on Poisson de media λ = 100.
+ (a) (1 punto) Calcular la distribuci´on del n´umero de insectos condicionada a 10 huevos en la flor y
+ representar gr´aficamente dicha distribuci´on. ¿Cu´antos insectos podemos esperar? ¿Cu´al es el n´umero
+ m´as probable de insectos que tendr´a la flor?
+ (b) (1 punto) [Entregar huevos nombre apellido.R] ¿Cu´al es la probabilidad de que nazcan m´as
+ de 50 insectos de una sola flor? Haz los c´alculos mediante simulaciones en R.
+ (c) (1 punto) Se ha observado una flor y se ha constatado que han nacido 50 insectos. Calcular la
+ distribuci´on del n´umero de huevos que hab´ıa en la flor y representar gr´aficamente dicha distribuci´on.
+ ¿Cu´al es el n´umero de huevos que podemos esperar? ¿Cu´al es el n´umero m´as probable de huevos
+ que tendr´a la flor?
+```{r}
+# Apartado A
+nhuevos = 10
+dbinom(0:10, 10, 0.35)
+plot(0:10, dbinom(0:10, 10, 0.35), type = "h")
+
+# Esperanza
+10 * 0.35
+
+# Moda
+3
+
+# Apartado B
+N = 10000
+contador = 0
+simulaciones = replicate(N, {
+  n_huevos = rpois(1, 100)
+  n_insectos = rbinom(1, n_huevos, 0.35)
+  if(n_insectos > 50){
+    contador = contador + 1
+  }
+  return(contador)
+})
+mean(simulaciones)
+
+
+ 
+ 
+```
+
+
+1.2  1.2. (2puntos) (40minutos)
+ Enunaempresac´arnicahancompradounamaquinadeembasealvac´ıo.Enelmanualdeinstrucciones
+ se indicaunaprobabilidaddel 3%dequeentreaireenelpaquete.Enlaventaalpormayor,venden
+ lotesde100filetesdeterneracadaunoenvasadoalvac´ıo.Sabiendoqueelclienterechazael loteentero
+ sihaycuatroom´asdelosproductosenmalestado:
+ (a) (1punto) ¿Cu´aleslaprobabilidaddequeelclienterechaceunlote?
+ (b) (1punto) ¿Decu´antospaquetescomom´aximotienequecomponerseunloteparaquemenosdel
+ 5%deloslotesseanrechazados?
+ 
+```{r}
+# Apartado A
+1 - pbinom(3, 100, 0.03)
+
+# Apartado B
+for(k in 1:100){
+  probabilidad = 1 - pbinom(3, k, 0.03)
+  if(probabilidad < 0.05){
+    numero = k
+  }
+}
+numero
+
+```
+
+ 1.3. (2.5puntos) (40minutos)Unam´aquinatienedoscomponentes.SeaXlavariablealeatoria:“duraci´on
+ del componente I (ena˜nos)”eY lavariablealeatoria: “duraci´ondel componente II (ena˜nos)”. La
+ Page3
+distribuci´onconjuntadeambasvariableses
+ f(x,y)= c·e−3x·y·e−y2 x≥0,y≥0
+ 0 enotrocaso
+ (a) (0.5puntos)Calculac.Sinoerescapazdehaceresteapartado,resuelvelossiguientesusandoc=1
+ (noeselresultadocorrecto).
+ (b) (1punto)Calculalaprobabilidaddequeamboscomponentesdurenentre1y3a˜nos.
+ (c) (1punto)CalculalaprobabilidaddequeelcomponenteIIdurealmenos1a˜nom´asqueelcompo
+nenteI.
+
+```{r}
+# Apartado A
+funcion_sin_normalizar = function(x, y){
+  ifelse(
+    (x >= 0) & (y >= 0),
+    exp(-3 * x) * y * exp(-y^2),
+    0
+  )
+}
+integral = integrate2_dxdy(
+  funcion_sin_normalizar,
+  from_x = function(y) 0,
+  to_x = function(y) Inf,
+  from_y = 0,
+  to_y = Inf
+)$value
+
+c = 1/integral
+c
+
+# Apartado B
+funcion = function(x, y){
+  ifelse(
+    (x >= 0) & (y >= 0),
+    c * exp(-3 * x) * y * exp(-y^2),
+    0
+  )
+}
+
+integral = integrate2_dxdy(
+  funcion,
+  from_x = function(y) 1,
+  to_x = function(y) 3,
+  from_y = 1,
+  to_y = 3
+)
+integral$value
+
+# Apartado C
+integral = integrate2_dydx(
+  funcion,
+  from_x = 0,
+  to_x = Inf,
+  from_y = function(x) x + 1,
+  to_y = function(x) Inf
+)
+integral$value
+```
+
+ 1.4. (2.5 puntos) (40 minutos) [Entregar laberinto nombre apellido.R] En un misterioso laberinto, te
+ encuentras en un punto con tres posibles caminos para explorar: A, B y C. El camino A se elige con
+ probabilidad 0.2, el camino B con probabilidad 0.5 y el camino C con probabilidad 0.3.
+ Tanto el camino A como el camino B llevan de vuelta al punto de inicio. Se tardan 3 horas en atravesar
+ el camino que parte de A, y 5 horas en atravesar el camino que parte de B. Despu´es de aventurarte por
+ una de estos dos caminos y llegar de nuevo al punto de inicio, experimentas una desorientaci´on temporal,
+ lo que te hace perder el rumbo y que olvides que camino has usado (¡puedes volver a elegir el mismo
+ camino que acabas de usar!). El camino C, por otro lado, lleva a la salida del laberinto despu´es de una
+ traves´ıa de 3 horas.
+ Hay una dificultad adicional. Despu´es de aventurarse por uno de los caminos y volver al punto de inicio
+ te sientes m´as cansado, lo que a˜nade 0.5 horas extra al tiempo necesario para recorrer cualquiera de los
+ caminos. Es decir, en el primer intento los tiempos de traves´ıa son 3, 5 y 3 horas para los caminos A, B
+ y C, respectivamente; en el segundo intento ser´an 3.5, 5.5 y 3.5; en el tercer intento ser´an 4, 6 y 4, etc.
+ ¿Cu´anto tiempo, en promedio, se tardar en salir del laberinto? Usa simulaciones en R
+ 
+ 
+```{r}
+N = 10000
+horas = 0
+sims = replicate(N, {
+  horas = 0
+  cansancio = 0
+  camino_escogido = sample(c('A', 'B', 'C'), 1, prob = c(0.2, 0.5, 0.3))
+  while(camino_escogido != "C"){
+    if(camino_escogido == "A"){
+      horas = horas + 3 + cansancio
+      cansancio = cansancio + 0.5
+      camino_escogido = sample(c('A', 'B', 'C'), 1, prob = c(0.2, 0.5, 0.3))
+    }
+    if(camino_escogido == "B"){
+      horas = horas + 5 + cansancio
+      cansancio = cansancio + 0.5
+      camino_escogido = sample(c('A', 'B', 'C'), 1, prob = c(0.2, 0.5, 0.3))
+    }
+  }
+  horas = horas + 3 + cansancio
+})
+
+mean(sims)
+
+
+
+```
+
+
+
+

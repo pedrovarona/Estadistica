@@ -1,0 +1,75 @@
+---
+title: "Ejercicios Variables Aleatorias"
+author: "Pedro Varona"
+date: "2025-10-08"
+output: html_document
+---
+28. El n´umero de pacientes que llega a las urgencias de un hospital tiene distribuci´on de Poisson de par´ametro
+λ = 5. Cada paciente tiene probabilidad p = 0.1 de requerir hospitalizaci´on. Calcula (a) La distribuci´on
+del n´umero de enfermos que ingresan en el hospital. (b) Si un d´ıa han ingresado 10 pacientes, hallar la
+probabilidad de que hayan llegado n personas al servicio de urgencia. Calcula el n´umero esperado de
+llegadas en estas circunstancias
+```{r}
+#Y = numero de pacientes que llegan
+#Y - P(5)
+# X = numero de pacientes que hospitalizan de los que han llevado
+#hospitalizar = exito
+# X - B(Y, p)
+p = 0.1
+
+#a) es calcular (X=X)
+# P ( X = x | Y = y) = dbinom (x, y, p)
+# P(Y = y) = dpois(y, lambda)
+# P(X=x) = SUMA (P(X = x | Y = y)  * P(Y = y))
+lambda = 5
+N = 100 # Aproximacion del infinito
+fx = function(x){
+  y = 0:N
+  sum(dbinom(x, y, p) * dpois(y, lambda))
+}
+fx = Vectorize(fx)
+fx(0:5)
+
+
+# Apartado b
+# Aplicamos bayes
+fy_10 = function(n){
+ dbinom(10, n, p) * dpois(n, lambda) / fx(10)
+}
+
+# E[Y|X=10] = SUMA(y * fy_10(y))
+y_10 = 10:100
+e = sum(y_10 * fy_10(y_10))
+e
+
+
+```
+30. Cada vez que se tira de una manivela, una m´aquina produce cierta pieza redonda con un radio medio
+de 10 cm y varianza 4 cm2. La distribuci´on de las longitudes es acampanada y sim´etrica.
+(a) Calcula el n´umero de piezas con un radio entre 7.5 y 11 cm que esperar´ıas encontrarte entre un
+conjunto de 500 piezas.
+(b) Un trabajador necesita 10 piezas con un radio mayor de 10.5 cm para construir una m´aquina. ¿Cu´al
+es la probabilidad que necesite tirar m´as de 20 veces de la manivela?
+(c) Si obtienes dos piezas de la m´aquina, calcula la probabilidad de que una sea mayor que la otra por
+m´as de 2 cm.
+Resuelve el ejercicio anal´ıticamente y mediante simulaciones.
+
+```{r}
+# X: longitud de la pieza
+# Y: numero de piezas con exito en un conjunto de 500
+# exito = la pieza esta entre 7.5 <= X <= 11
+# E[Y]
+# Y- B(500, p)
+# p = P(7.5 <= X <= 11) = pnorm(11, parametros) - pnorm(7.5, parametros)
+# X - N(mean = 10, var = 4)
+
+p = pnorm(11, mean= 10, sd=2) - pnorm(7.5, mean = 10, sd = 2)
+
+# E[Y] = n * p
+e = 500*p
+floor(e)
+
+
+```
+
+

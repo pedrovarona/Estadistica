@@ -1,0 +1,178 @@
+---
+title: "Distribuciones conjuntas"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introducción teórica.
+
+Dadas dos variables aleatorias **discretas** $X$ e $Y$ se define su función de **densidad conjunta** como:
+
+$$ f_{X,Y}(x,y) = P(X=x \text{ e } Y=y) $$
+
+Igual que en el tema de probabilidad condicionada, se puede generalizar a variables aleatorias:
+
+$$ f_{X,Y}(x,y) = P(X=x \mid Y=y) P(Y = y) $$
+
+$$ f_{X,Y}(x,y) = P(Y=y \mid X=x) P(X = x) $$
+
+**Proposición**. Dadas dos variables aleatorias *discretas* $X$ e $Y$ con función de densidad conjunta $f_{X,Y}$. Se puede calcular la función de densidad de cada una (marginalización) de la siguiente manera:
+
+$$f_X (x) = \sum _{y = -\infty} ^\infty f_{X,Y}(x,y)$$
+
+$$f_Y (y) = \sum _{x = -\infty} ^\infty f_{X,Y}(x,y)$$
+
+**Fórmulas de probabilidad condicionada**. En base a lo anterior, se comprueban fácilmente las fórmulas de la probabilidad total y de Bayes:
+
+$$ P(X=x) = \sum _{y = -\infty} ^\infty P(X=x \mid Y=y) P(Y = y)$$
+
+$$ P(Y = y \mid X = x) = \dfrac{P(X=x \mid Y=y) P(Y = y)}{P(X=x)} $$
+
+Los anteriores conceptos son aplicados en *variables discretas*, sin embargo, podemos generalizar los conceptos a *variables continuas*.
+
+Dadas dos variables aleatorias **continuas** $X$ e $Y$ su función de densidad conjunta $f_{X,Y}$ se puede definir (para definición formal leer más abajo) como aquella tal que:
+
+$$f_X (x) = \int _{-\infty} ^\infty f_{X,Y}(x,y)dy$$
+
+$$f_Y (y) = \int _{ -\infty} ^\infty f_{X,Y}(x,y) dx$$
+
+Además, se definen las condicionadas mediante las ecuaciones:
+
+$$ f_{X,Y}(x,y) = f _{X \mid Y} (x\mid y) f_Y (y) $$
+
+$$ f_{X,Y}(x,y) = f_{Y \mid X} (y\mid x) f_X(x) $$
+
+**Fórmulas de probabilidad condicionada**. En base a lo anterior, se comprueban fácilmente las fórmulas de la probabilidad total y de Bayes:
+
+$$ f_X(x) = \int _{y = -\infty} ^\infty f_{X \mid Y} (x\mid y) f_Y(y) dy$$
+
+$$ f_{Y\mid X}(y \mid x) = \dfrac{f_{X\mid Y}(x \mid y) f_Y(y)}{f_X(x)} $$
+
+Además, sean continuas o discretas, dos variables aleatorias $X$ e $Y$ son independientes si $f_{X,Y} = f_X \cdot f_Y$.
+
+En general, se define la función de **distribución** conjunta de las variabels $X_1 ,  \ldots , X_n$ como:
+
+$$ F(x_1 , \ldots , x_n) = P(X_1 \leq x_1 , \ldots, X_n \leq x_n) $$
+
+A partir de la cual, se calcula la función de **densidad** (en el caso continuo) como:
+
+$$ f(x_1 , \ldots , x_n) = \dfrac{\partial^n F}{\partial x_1 \cdots \partial x_n} (x_1 , \ldots , x_n) $$
+
+**Teorema** (Ley del estadístico inconsciente). Sean $X_1 , \ldots , X_n$ variables aleatorias con función de densidad conjunta $f$. Dada una función $f$, entonces:
+
+* Si las variables son discretas, entonces $E[g(X_1 , \ldots , X_n)] = \sum _{x_1 , \ldots , x_n} g(x_1 , \ldots , x_n)f(x_1 , \ldots , x_n)$.
+
+* Si las variables son continuas, entonces $E[g(X_1 , \ldots , X_n)] = \int _{\mathbb{R}^n} g(x_1 , \ldots , x_n)f(x_1 , \ldots , x_n) dx_1 \cdots dx_n$.
+
+Dadas dos variables aleatorias $X$ e $Y$, se define su **covarianza** como:
+
+$$ \sigma _{XY} = E[(X-\mu _X)(Y-\mu_Y)] $$
+
+Y se define su **correlación** como:
+
+$$ \rho = \dfrac{\sigma_{XY}}{\sigma_X \sigma _Y} $$
+
+**Proposición**. Dadas dos variables aleatorias $X$ e $Y$ se tiene que:
+
+* $\sigma _{XY} = E[XY] - E[X]E[Y]$.
+
+* Si $X$ e $Y$ son independientes, entonces $\rho = 0$.
+
+* $Var[X \pm Y] = \sigma _X ^2 \pm 2\sigma _{XY} + \sigma _Y ^2$
+
+* $-1 \leq \rho \leq 1$
+
+## Ejercicios
+
+Se lanza una moneda al aire 10 veces y se considera las siguientes variables aleatorias:
+
+* $X=$ "número de caras obtenidas".
+* $Y=$ "número de caras iniciales obtenidas".
+
+Calcular la distribución conjunta y comprobar que la suma total es 1.
+
+```{r}
+# Densidad de Y
+fy = function(y){
+	ifelse(y %in% 1:10, 0.5 ^ y, 0)
+}
+
+# Densidad condicionada X|Y
+fx_y = function(x,y){
+  if( x<y){
+    0
+  }else if(x==y){
+    0.5 ^ (10 - x)
+      }
+  else if(x>y){
+    choose(9-y, x-y) * 0.5 ^ (10 - y)
+    }else{
+      0
+    }
+}
+  
+
+
+# Densidad conjunta (X,Y) 
+fxy = function(x,y){
+	fx_y(x,y)*fy(y)
+}
+
+# Vectorizamos para poder pasar vectores
+fxy = Vectorize(fxy)
+
+# Obtenemos todas las probabilidades
+probs = outer(0:10, 0:10, fxy)
+
+# Comprobamos la suma
+sum(probs) == 1
+```
+
+Supongamos que un ordenador depende de los componentes $A$ y $B$, cuyas vidas respectivas modelizamos con las variables aleatorias $X$ e $Y$. La densidad conjunta se define como:
+
+$$ f(x,y) = \begin{cases} 
+e^{-y} & \text{ si } 0 < x < y \\
+0 & \text{ en otro caso}
+\end{cases} $$
+
+Calcula la probabilidad de que $B$ dure al menos tres unidades de tiempo más que $A$.
+
+* En primer lugar, debemos determinar la región sobre la que vamos a integrar $D = \{ (x,y) \in \mathbb{R}^2 \, \mid \, x + 3 \leq y \}$. Es conveniente representar gráficamente la región $D$.
+
+* Ahora calculamos la probabilidad:
+
+$$ P(X + 3 \leq Y) = \int\int _D f(x,y)dA = ????? $$
+
+Calcula las distribuciones marginales:
+
+$$f_X (x) = \int _{-\infty} ^\infty f(x,y)dy =????? $$
+
+
+$$f_Y (x) = \int _{-\infty} ^\infty f(x,y)dx = ????? $$
+
+Calcula la función de densidad de $X$ condicionada a que $B$ ha durado 5 unidades de tiempo.
+
+$$ f_{X \mid Y=5} (x \mid 5) = \dfrac{f(x,5)}{f_Y (5)} = ?????$$
+
+Calcula la función de densidad de $Y$ condicionada a que $A$ ha durado 5 unidades de tiempo.
+
+$$ f_{Y \mid X=5} (y \mid 5) = \dfrac{f(5,y)}{f_X (5)} = ?????$$
+
+¿Probabilidad de que $B$ dure entre 4 y 7 unidades de tiempo sabiendo que $A$ ha durado 5 unidades de tiempo?
+
+$$ P(4 \leq (Y \mid X=5) \leq 7) = \int _4 ^7 f_{Y \mid X=5} (y\mid 5)dy = ????? $$
+
+Tiramos dardos a una diana de radio 1 con centro en el origen. Los dardos impactan aleatoriamente en el punto $(X,Y)$. Si la densidad conjunta es *uniforme*. ¿Cuál es la distancia esperada al origen?
+
+$$ f(x,y) = \begin{cases} \frac{1}{\pi} & \text{ si } x^2 + y^2 \leq 1 \\ 0 & \text{ en otro caso} \end{cases} $$
+
+Vamos a calcular $E[d((X,Y),(0,0)] = E[\sqrt{X^2 + Y^2}]$, para ello aplicamos la ley del estadístico inconsciente:
+
+$$ E[\sqrt{X^2 + Y^2}] = \int_{\mathbb{R}^2} \sqrt{x^2 + y^2} f(x,y) dA $$ 
+
+Teniendo en cuenta que la función se anula fuera de $D = \{(x,y)\in\mathbb{R}^2 \,\mid \, x^2 + y^2 \leq 1\}$, y utilizando un cambio a polares, entonces:
+
+$$ E[\sqrt{X^2 + Y^2}] = \int_D \dfrac{\sqrt{x^2 + y^2}}{\pi} dA = \dfrac{1}{\pi}\int _0 ^{2\pi} \int _0 ^1 r^2 dr d\theta = \dfrac{2}{3} $$ 

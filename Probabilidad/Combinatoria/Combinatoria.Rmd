@@ -1,0 +1,173 @@
+---
+title: "Combinatoria"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Principio de adición
+
+Consideremos un procedimiento de $r$ etapas, de modo que el resultado de cada una de ellas excluye a las demás y en cada etapa se obtiene respectivamente $n_1,\ldots,n_r$ posibles resultados, entonces el procedimiento global tendrá $n_1+ \cdots + n_r$ resultados totales.
+
+**Ejemplo**: ¿De cuántas formas se puede cruzar un río, sabiendo que se dispone de 3 barcos, 4 bañadores de natación, 2 helicópteros? Suponemos que cada método es **excluyente**.
+
+```{r}
+3 + 4 + 2
+```
+
+**Nota**: Cuando contamos casos de más en un proceso de adición, se eliminan de la cuenta *restando*.
+
+## Principio de multiplicación
+
+Consideremos un procedimiento de $r$ etapas, de modo que el resultado de cada una de ellas no influye en las demás y en cada etapa se obtiene respectivamente $n_1,\ldots , n_r$ posibles resultados, entonces el procedimiento global tiene $n_1 \cdots n_r$ resultados totales.
+
+**Ejemplo**: ¿De cuántas formas se puede vestir una persona que tiene 3 pantalones, 5 camisetas y 3 zapatillas? Aquí, cada método **no** es excluyente.
+
+```{r}
+3 * 5 * 3
+```
+
+¿Cuántos números entre 1000 y 9999 tienen solamente dígitos pares?
+
+```{r}
+4 * 5 * 5 * 5
+```
+
+**Nota**: Cuando contamos casos de más en un proceso de multiplicación, se eliminan de la cuenta *dividiendo*.
+
+## Permutaciones sin repetición.
+
+Sea $A = \{a_1 , \ldots, a_n \}$ un conjunto de $n$ elementos. Diremos que una permutación de $A$ es una lista ordenada $(x_1 , \ldots, x_n)$ formada por los elementos de $A$ sin repetirse.
+
+Denotaremos por $P_n$ al número de permutaciones sobre un conjunto de $n$ elementos.
+
+**Ejemplo**: Un grupo musical grabó 11 canciones con las que editará un nuevo disco. ¿De cuántas maneras puede elegir la secuencia de los temas? *Aplica el principio multiplicativo*
+
+```{r}
+factorial(11)
+```
+
+En general, $P_n = n!$. Resuelve el ejemplo anterior utilizando `factorial()`:
+
+```{r}
+factorial(11)
+```
+
+## Permutaciones con repetición.
+
+Sea $A = \{a_1 , \ldots, a_r \}$ un conjunto de $r$ elementos y $n_1 + \cdots + n_r = n$. Diremos que $(x_1 , \ldots, x_n)$ es una permutación con repetición si $a_i$ se repite $n_i$ veces para cada $i = 1 , \ldots , r$. $P_n ^{n_1, \ldots , n_r}$ es el número de permutaciones con repetición.
+
+**Ejemplo**: ¿Cuántos números distintos de 6 cifras se pueden escribir usando 3 unos, 2 cincos y 1 ocho? *Aplica el principio multiplicativo y recuerda eliminar casos repetidos*
+
+```{r}
+(6 * 5 * 4 * 3 * 2 * 1)/(3 * 2 * 1 * 2 * 1 * 1)
+
+```
+
+En general, $P_n ^{n_1, \ldots , n_r} = \frac{n!}{n_1! \cdots n_r!}$. Resuelve el ejemplo anterior utilizando `factorial()`:
+
+```{r}
+denominador = factorial(3) * factorial(2) * factorial(1)
+numerador= factorial(6)
+
+resultado = numerador/denominador
+resultado
+```
+
+## Variaciones con repetición.
+
+Sea $A = \{a_1 , \ldots, a_n \}$ un conjunto de $n$ elementos y $m\in\mathbb{N}$. Diremos que una $m$-variación es un elemento cualquiera $(x_1 , \ldots, x_m) \in A^m$. $VR^m _n$ es el número de $m$-variaciones con repetición de $n$ elementos.
+
+**Ejemplo**: ¿Cuántos número binarios de 8 cifras hay? *Aplica el principio multiplicativo*
+
+```{r}
+2 * 2 * 2 * 2 * 2 * 2 * 2 * 2
+
+2^8
+```
+
+En general, $VR^m _n = n^m$.
+
+## Variaciones sin repetición.
+
+Sea $A = \{a_1 , \ldots, a_n \}$ un conjunto de $n$ elementos y $m<n$. Diremos que una $m$-variación es una lista $(x_1 , \ldots, x_m) \in A^m$ en la que **no** se repiten elementos. $V^m _n$ es el número de $m$-variaciones sin repetición de $n$ elementos.
+
+**Ejemplo**: Un grupo musical ha creado 11 canciones, pero su productor musical les ha propuesto hacer un disco con 8 canciones. ¿Cuántas opciones tienen? *Aplica el principio multiplicativo*
+
+```{r}
+(11 * 10 * 9 * 8 * 7 * 6 * 5 * 4)
+
+factorial(11)/factorial(3)
+```
+
+En general, $V^m _n = \frac{n!}{(n-m)!}$.
+
+## Combinaciones.
+
+Sea $A = \{a_1 , \ldots, a_n \}$ un conjunto de $n$ elementos y $k\leq n$. Diremos que una combinación de $n$ sobre $k$ es un subconjunto cualquiera de $A$ con $k$ elementos. $C_k ^n$ es el número de combinaciones $n$ sobre $k$.
+
+**Ejemplo**: En un colegio de 100 estudiantes se forma una clase con 30 alumnos. ¿Cuántas clases distintas pueden formarse? *Aplica el principio multiplicativo y recuerda eliminar casos repetidos*
+
+```{r}
+factorial(100)/(factorial(70) * factorial(30))
+```
+
+En general, $C_k ^n = \binom{n}{k} = \frac{n!}{k!(n-k)!}$. En R podemos utilizar `choose()`:
+
+```{r}
+choose(100, 70)
+choose(100, 30)
+
+# da igual uno que otro ya que como se ve en la formula de arriba factorial(70) * factorial(30) da igual quien vaya primero
+```
+
+## Ejercicios varios.
+
+En un bar, 5 personas piden 3 cafés y 2 cañas. ¿De cuántas formas pueden repetirse las bebidas?
+
+```{r}
+choose(5, 3)
+# o poner choose(5, 2), es lo mismo
+```
+
+¿De cuantas formas distintas pueden sentarse en 6 butacas consecutivas 3 chicos y 3 chicas de forma que no haya ni dos chicos ni dos chicas consecutivas?
+
+```{r}
+# sin importarme el nombre solo 2 formas
+
+# si me importa el nombre es 
+2 * factorial(3) * factorial(3)
+```
+
+El próximo Enero vas a visitar las ciudades $A,B,C,D$. Si cada visita requiere un día. ¿De cuántas formas distintas puedes programar tus viajes?
+
+```{r}
+31 * 30 * 29 * 28
+```
+
+El próximo Enero vas a visitar las ciudades $A,B,C,D$. Si cada visita requiere un día. ¿De cuántas formas distintas puedes programar tus viajes **en ese orden específico**?
+
+```{r}
+choose(31, 4)
+# o poner choose(31, 27), es lo mismo
+
+factorial(31)/(factorial(27)*factorial(4))
+```
+
+Un alumno tiene 10 libros: 4 de mates, 3 de programación, 2 de historia y 1 de inglés. ¿De cuántas maneras se pueden ordenar los libros si el alumno quiere ordenarlos de forma temática?
+
+```{r}
+factorial(4)
+
+# y si ordenamos cada tema con sus libros?
+
+factorial(4) * factorial(4) * factorial(3) * factorial(2) * factorial(1)
+
+
+#Un alumno tiene 12 libros: 6 de mates, 3 de programación, 2 de historia y 1 de inglés. ¿De cuántas maneras se pueden ordenar los libros si el alumno quiere ordenarlos de forma temática con solo 4 de mates y 1 de historia?
+
+
+factorial(4) * 6 * 5 * 4 * 3 * 3 * 2 * 1 * 2 * 1
+```

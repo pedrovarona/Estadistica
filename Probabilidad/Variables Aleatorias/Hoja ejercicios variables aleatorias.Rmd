@@ -1,0 +1,508 @@
+---
+title: "Ejercicios Tema 3 Variables Aleatorias"
+author: "Pedro Varona"
+date: "2025-09-22"
+output: html_document
+---
+
+1. [Spiegel 2.2, 2.4]
+(a) Encuentra la funci´on de probabilidad de ni˜nos y ni˜nas en familas con 3 hijos, suponiendo igual probabilidad para ni˜nos y ni˜nas.
+(b) Encuentra la funci´on de distribuci´on para la variable aleatoria del apartado a).
+(c) Dibuja la funci´on de distribuci´on.
+(d) Imag´ınate que el unico dato del que partes es la funci´on de distribuci´on. ¿C´omo podr´ıas hallar la
+funci´on de probabilidad?
+```{r}
+# Apartado A
+dbinom(x = 0:3, 3, prob=0.5)
+
+# Apartado B
+pbinom(x = 0:3, 3, prob=0.5)
+
+# Apartado C
+x = 0:3
+plot(x, pbinom(x, 3, prob=0.5), type = "l")
+
+# Apartado D
+pbinom(0, 3, prob=0.5) = dbinom(0, 3, prob=0.5)
+pbinom(1, 3, prob=0.5) - pbinom(0, 3, prob=0.5) = dbinom(1, 3, prob=0.5)
+pbinom(2, 3, prob= 0.5) - pbinom(1, 3, prob=0.5) = dbinom(2, 3, prob=0.5)
+pbinom(3, 3, prob=0.5) - pbinom(2, 3, prob= 0.5) = dbinom(3, 3, prob=0.5)
+
+```
+
+
+2. 3 baterıas se eligen al azar entre un grupo de 3 nuevas, 4 usadas pero que funcionan, y 5 baterıas defectuosas. Sea X “el numero de baterıas nuevas”; sea Y “el n´umero de baterıas usadas pero funcionando”. ¿Cu´al es la distribuci´on conjunta de X e Y ? ¿Y las marginales? Calc´ulalas mediante razonamiento directo y marginalizando p(x, y) en la tabla.
+
+```{r}
+# X = n baterias nuevas
+# Y = numeros baterias usadas pero funcionan
+
+
+# Apartado A
+funcion = function(x, y){
+  ifelse(
+    ((0 <= x + y) & (x + y<= 3)),
+    (choose(3, x) * choose(4, y) * choose(5, 3 - x- y)) / choose(12, 3),
+    0
+  )
+}
+
+A = outer(0:3, 0:3, FUN = funcion)
+# Apartado B
+rowSums(A)
+
+# Apartado B
+colSums(A)
+
+```
+
+3. Se realizan 12 lanzamientos de una moneda equilibrada. Determinar la distribuci´on (a) del numero de caras obtenidas. (b) de la diferencia entre caras y cruces (pista: nº de cruces = 12- nº de caras). En cada caso, representar la funci´on de probabilidad para caracterizar la distribuci´on.
+ 
+```{r}
+# Apartado a
+x = 0:12
+distribucion_caras = dbinom(x, 12, prob = 0.5)
+plot(x, dbinom(x, 12, prob = 0.5), type = "l")
+
+# Apartado b
+d = x - (12 - x)
+plot(d, distribucion_caras, type = "h")
+
+```
+
+ 
+
+4. Se lanzan dos monedas con probabilidades de cara p1 y p2. a) Estudiar el n´umero de lanzamientos N que se realizan hasta que aparece cara en ambas monedas simult´aneamente. b) ¿Cu´al es n´umero esperando de lanzamientos si p1 = 0.5 = p2.
+```{r}
+# Apartado A
+(1- p1*p2) ^ (n-1) * (p1*p2)
+
+(1-p1*p2)/(p1*p2) + 1
+
+p1 = 0.5
+p2 = 0.5
+
+N = 3
+prob = (1-p1*p2)^(N-1) * p1*p2
+
+f_X = function(n, p1, p2){
+  (1-p1*p2)^(n-1) * p1*p2
+}
+
+plot(1:15, f_X(1:15, 0.5, 0.5), type = "h")
+```
+
+5. a funcion de probabilidad conjunta de dos variables aleatorias X e Y esta dada por
+ f(x,y) = cxy
+ 0
+ x =1,2,3 e y =1,2,3
+ en otro caso
+ Calcula (a) la constante c, (b) P(X = 2,Y = 3), (c) P(X ≤ 2,Y ≤ 2), (d) P(X ≥ 2), (e) P(Y ≤ 2), (f)
+ P(X =1), (g) P(Y = 3)
+```{r}
+# Apartado A
+x = 1:3
+y = 1:3
+
+tabla = outer(x, y, FUN = "*")
+
+suma_total = sum(tabla)
+
+c_value = 1/suma_total
+
+# Apartado B
+funcion = function(x, y){
+  ifelse(
+    ((x >= 1)& (x <= 3)) & ((y >= 1) & (y <= 3)),
+    x * y * c_value,
+    0
+  )
+}
+
+funcion(2, 3)
+# Apartado C
+sum(outer(0:2, 0:2, funcion))
+
+# Apartado D
+sum(outer(2:4, 1:3, funcion))
+
+
+# Apartado E
+sum(outer(1:3, 0:2, funcion))
+
+# Apartado F
+sum(outer(1, 1:3, funcion))
+
+# Apartado G
+sum(outer(1:3, 3, funcion))
+```
+
+6. Para la distribución del problema 5, encuentra la funcion de densidad condicional de (a) X dado Y , (b) Y dado X
+ 
+```{r}
+
+
+
+
+```
+
+7. Encuentra las funciones de probabilidad marginal de (a) X e (b) Y, para las variables aleatorias del problema anterior. (c) Determina si X e Y son independientes
+ 
+```{r}
+
+
+
+
+
+```
+
+8. Una m´aquina fabrica tornillos de los cuales el 10% son defectuosos. Encuentra la probabilidad de que en una muestra tomada al azar de 400 tornillos (a) como m´aximo 30, (b) entre 30 y 50, (c) 65 o m´as, de
+ los tornillos sean defectuosos.
+ 
+```{r}
+# Apartado A
+pbinom(30, 400, 0.1)
+
+# Apartado B
+pbinom(50, 400, 0.1) - pbinom(29, 400, 0.1)
+
+# Apartado C
+1 - pbinom(64, 400, 0.1)
+```
+ 
+
+
+9. Cinco bolas se colocan al azar en tres urnas. Hallar la distribucion del numero de urnas que contienen una bola.
+```{r}
+# Misma urna todas = 3 
+# Dos urnas ocupadas = 2^5 - 2(los dos casos donde todas pueden ir a A o B) * 3(cantidad de urnas)
+# Tres urnas ocupadas = 3^5
+
+n1 = 3
+n2 = (2^5 - 2) * 3 
+n3 = 3^5 - 3*2^5 + 3
+
+
+p1 = n1/(3^5)
+p2 = n2/(3^5)
+p3 = n3/(3^5)
+```
+
+
+10. De una urna que contiene a bolas blancas y b negras se hacen extracciones sin reemplazamiento. Sea Xi el numero de extraccion en que aparece la i-esima bola blanca. Calcula (a) La distribuci´on conjunta de X1 y X2. (b) La distribucion de X1 condicionada por X2
+
+```{r}
+# a = bolas blancas
+# b = bolas negras
+# n_bolas = a + b
+# hypergeom
+# distribucion conjunta X1 y X2
+
+
+
+
+```
+11.  Una variable aleatoria (VA) X tiene funci´on de densidad
+ f(x) = ce−3x
+ 0
+ x ≥0
+ x <0.
+ a +b
+ a
+ Calcula (a) la constante c, (b) P(1 < X < 2), (c) P(X ≥ 3), (d) P(X < 1), (e) La funci´on de distribuci´on
+ de X, (f) Representa gr´aficamente las funciones de distribuci´on y densidad de manera que describa la
+ relaci´on entre ellas.
+ 
+```{r}
+#Apartado A
+funcion_sin_normalizar = function(x){
+  ifelse(
+    x >= 0,
+    exp(-3*x),
+    0
+  )
+}
+
+integral = integrate(funcion_sin_normalizar, lower = -Inf, upper = Inf)
+c_value = 1/integral$value
+
+# Apartado B
+integral = integrate(funcion_sin_normalizar, lower = 1, upper = 2)$value
+
+# Apartado C
+integral = integrate(funcion_sin_normalizar, lower = 3, upper = Inf)$value
+```
+
+
+12. Una variable aleatoria (VA) X tiene funci´on de densidad
+ 
+ 
+ 
+ f(x) =
+ 
+ 
+ cx2
+ cx
+ 0
+ 1 ≤x≤2
+ 2 ≤x≤3
+ x <0.
+ x <0
+ 1 −e−3x
+ x ≥0
+ Calcula (a) la constante c, (b) P(X > 2), (c) P(1/2 < X < 3/2), (d) la funci´on de distribuci´on de X,
+ (e) Representa gr´aficamente las funciones de distribuci´on y densidad de manera que describa la relaci´on
+ entre ellas.
+ 
+```{r}
+source("utils.R")
+
+# Apartado A
+funcion_sin_normalizar <- function(x) {
+  ifelse(
+    x >= 1 & x < 2,        
+    x^2,
+    ifelse(
+      x >= 2 & x <= 3,          
+      x,
+      0
+    )
+  )
+}
+
+integral = integrate(funcion_sin_normalizar, lower = -Inf, upper = Inf)
+c = 1/integral$value
+c
+
+# Apartado B
+funcion = function(x){
+  ifelse(
+    x >= 1 & x < 2,        
+    c * (x^2),
+    ifelse(
+      x >= 2 & x <= 3,          
+      c*x,
+      0
+    )
+  )
+}
+
+
+integrate(funcion, lower = 2, upper = Inf)$value
+
+# Apartado C
+integrate(funcion, lower = 1/2, upper = 3/2)$value
+
+# Apartado D
+
+```
+
+13. Unpuenteesbombardeado. Porsermuyestrecho,podemosaproximarloporunal´ıneaunidimensional
+ y,portanto,describirlomedianteunasolacoordenada. Elpuenteseencuentraentre lospuntosayb.
+ ¿Cu´alessonlasfucionesdedensidadydedensidadacumuladadelpuente?¿Cu´ales laprobabilidadde
+ alcanzarunsegmentodelpuentedetama˜nol?
+
+```{r}
+
+
+
+
+```
+
+14. Unapersonaest´ajugandoalosdardosconunadianaderadioA.El centrode ladianatieneradioB.
+ ¿Cu´al es ladistribuci´ondel radio? ¿Cu´al es laprobabilidaddedar enel centrode ladiana? ¿Yde acertarenelsegundoanillo(comprendidoentrelosradiosByC)
+ 
+```{r}
+
+
+
+
+
+
+```
+
+ 
+15.  Lademandadecombustibledeunagasolinera,enm3, tienedistribuci´on
+f(x)= kx2 0≤x≤27
+ k274/x2 x≥27.
+ 
+ (a)Si lagasolineratieneundep´ositode100m3,queserellenaalprincipiodecadasemana,hallar la
+ probabilidaddequesepuedaatendertodalademandasemanal. (b)Cu´aldeber´ıaser lacapacidaddel
+ dep´ositoparaquehayaprobabilidad0.95dequenoseagoteelcombustibleenunasemana
+
+```{r}
+funcion_sin_normalizar = function(x){
+  ifelse(
+    (x >= 0) & (x < 27),
+    (x^2),
+    ifelse(
+      x >= 27,
+      (27^4) / (x^2),
+      0
+    )
+  )
+}
+integral = integrate(funcion_sin_normalizar, lower = -Inf, upper = Inf)
+
+k = 1/integral$value
+k
+
+funcion = function(x){
+  ifelse(
+    (x >= 0) & (x < 27),
+    k * (x^2),
+    ifelse(
+      x >= 27,
+      (k * (27^4)) / (x^2),
+      0
+    )
+  )
+}
+integral = integrate(funcion, lower = -Inf, upper = 100)
+integral$value
+
+integral = integrate(funcion, lower = -Inf, upper = 406)
+integral$value
+```
+16. Lafunci´ondeprobabilidadconjuntadedosvariablesaleatoriasXeY est´adadapor
+ f(x,y)= c(x2+y2) 0≤x≤1e0≤y≤1
+ 0 enotrocaso
+ Calcula(a) laconstantec, (b)P(X<1/2,Y>1/2), (c)P(1/4<X<3/4), (d)P(Y<1/2).
+ 
+```{r}
+# Apartado A
+funcion_sin_normalizar = function(x, y){
+  ifelse(
+    (x >= 0) & (x <= 1) & (y >= 0) & (y <= 1),
+    (x^2 + y^2),
+    0
+  )
+}
+
+integral = integrate2_dxdy(
+  funcion_sin_normalizar,
+  from_x = function(y) -Inf,
+  to_x = function(y) Inf,
+  from_y = -Inf,
+  to_y = Inf
+)$value
+
+c = 1/integral
+
+funcion = function(x, y){
+  ifelse(
+    (x >= 0) & (x <= 1) & (y >= 0) & (y <= 1),
+    c * (x^2 + y^2),
+    0
+  )
+}
+
+#Apartado B
+integral = integrate2_dxdy(
+  funcion,
+  from_x = function(y) -Inf,
+  to_x = function(y) 1/2,
+  from_y = 1/2,
+  to_y = Inf
+)
+integral$value
+
+# Apartado C
+integral = integrate2_dxdy(
+  funcion,
+  from_x = function(y) 1/4,
+  to_x = function(y) 3/4,
+  from_y = -Inf,
+  to_y = Inf
+)
+integral$value
+
+# Apartado D
+integral = integrate2_dxdy(
+  funcion,
+  from_x = function(y) -Inf,
+  to_x = function(y) Inf,
+  from_y = -Inf,
+  to_y = 1/2
+)
+integral$value
+
+```
+
+17.  Encuentra las funcionesdedistribuci´onmarginal de (a)Xe (b)Y, para lasvariablesaleatoriasdel
+ problemaanterior. (c)DeterminasiXeY sonindependientes.
+ 
+```{r}
+# Marginal X
+marginal_x = function(x){
+  integrate(funcion, -Inf, Inf, x=x)$value
+}
+marginal_x = Vectorize(marginal_x)
+
+# Marginal Y
+marginal_y = function(y){
+  integrate(funcion, -Inf, Inf, y = y)$value
+}
+marginal_y = Vectorize(marginal_y)
+
+# Son independientes?
+
+```
+
+
+
+18. Para ladistribuci´ondelproblema16, encuentra lafunci´ondedensidadcondicionalde(a)XdadoY,
+ (b)YdadoX.
+```{r}
+
+
+
+
+
+```
+
+19. Lafunci´ondedensidadconjuntadeXeY es
+ f(x,y)=
+ xy
+ 96 0<x<4, 1<y<5
+ 0 enotrocaso
+ CalculaP(X+Y<3)
+ 
+```{r}
+funcion = function(x, y){
+  ifelse(
+    (x > 0) & (x < 4) & (y > 1) & (y < 5),
+    (x*y)/96,
+    0
+  )
+}
+
+integral = integrate2_dxdy(
+  funcion,
+  from_x = function(y) -Inf,
+  to_x = function(y) 3 - y,
+  from_y = 1,
+  to_y = 3
+)
+
+
+```
+
+20. 
+49. Cuando Fisher va al gimnasio realiza una de las siguientes actividades: correr, andar en bicicleta estática o remar. El elige cada una de estas actividades con probabilidades 0.5, 0.3 y 0.2. Si elige correr o andar en bicicleta, la cantidad de tiempo (en minutos) que pasa haciendo ejercicio tiene distribución exponencial con parámetros 0.05 y 0.025, respectivamente. Si elige remar, solo rema durante 10 minutos, se detiene para tomar un vaso de agua y comienza de nuevo, eligiendo una de las tres actividades como si acabara de entrar por la puerta del gimnasio. Programa un script en R que permita calcular la esperanza del tiempo que pasa Fisher haciendo deporte en una visita al gimnasio. Utiliza round() para responder.
+
+```{r}
+
+# X = Deporte que hace
+# Y = esperanza de (X)
+
+p_correr = 0.5
+p_bici = 0.3
+p_remar = 0.2
+
+media_correr = 1/0.05
+media_bici = 1/0.025
+
+p_correr * media_correr + p_bici * media_bici + p_remar * (10 + esperanza)
+```
+

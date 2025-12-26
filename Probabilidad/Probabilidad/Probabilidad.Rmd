@@ -1,0 +1,126 @@
+---
+title: "Probabilidad"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introducción teórica.
+
+El **espacio muestral** $\Omega$ de un experimento es el conjunto formado por todos los posibles resultados del experimento. Un **espacio de sucesos** es un conjunto $\mathcal{A}\subseteq \mathcal{P} (\Omega)$ cuyos elementos son los **eventos** del experimento. Además, exigiremos que $\mathcal{A}$ sea una **$\sigma$-álgebra**, es decir:
+
+* $\Omega \in \mathcal{A}$.
+
+* Si $A \in \mathcal{A}$, entonces $\Omega \smallsetminus A \in \mathcal{A}$.
+
+* Si $\{A_n \}_{n\in\mathbb{N}} \subseteq \mathcal{A}$, entonces $\bigcup _{n\in\mathbb{N}} A_n \in \mathcal{A}$.
+
+El par $(\Omega , \mathcal{A})$ formado por un conjunto y una $\sigma$-álgebra, se denomina **espacio medible**. Dado un espacio medible $(\Omega , \mathcal{A})$, diremos que $P: \,\mathcal{A} \longrightarrow \mathbb{R}$ es una función de probabilidad si verifica los axiomas de Kolmogorov:
+
+* Para todo $A \in \mathcal{A}$, se tiene que $P(A) \geq 0$.
+
+* La probabilidad total es $P(\Omega) = 1$.
+
+* Si $\{A_n \}_{n\in\mathbb{N}} \subseteq \mathcal{A}$ y $A_i \cap A_j = \emptyset$ para todo $i\neq j$, entonces $P \left( \bigcup _{n\in\mathbb{N}} A_n \right) = \sum _{n\in\mathbb{N}} P(A_n)$.
+
+La terna $(\Omega , \mathcal{A}, P)$ se llama **espacio de probabilidad** si $\Omega$ es un conjunto no vacío, $\mathcal{A}$ es una $\sigma$-álgebra y $P$ una función de probabilidad.
+
+A partir de los axiomas de Kolmogorov se pueden deducir *fácilmente* las siguientes propiedades:
+
+* $P(\emptyset) = 0$.
+
+* Para todo $A \in \mathcal{A}$, se tiene que $P(A) \leq 1$.
+
+* Para todo $A \in \mathcal{A}$, se tiene que $P(\Omega \smallsetminus A) = 1 - P(A)$.
+
+* Para todo $A,B \in \mathcal{A}$ tales que $A\subseteq B$, se tiene que $P(A) \leq P(B)$.
+
+* Para todo $A,B \in \mathcal{A}$, se tiene que $P(A \smallsetminus B) = P(A) - P(A\cap B)$.
+
+* Para todo $A,B \in \mathcal{A}$, se tiene que $P(A \cup B) = P(A) + P(B) - P(A\cap B)$.
+
+**Regla de Laplace**. Sea $(\Omega , \mathcal{A}, P)$ un espacio de probabilidad finito tal que $P(\{x\}) = P(\{y\})$ para todo $x,y \in \Omega$, entonces para todo $A \in \mathcal{A}$ se tiene que: $$P(A) = \dfrac{|A|}{|\Omega|} = \dfrac{\text{nº de casos favorables}}{\text{nº de casos totales}}$$
+
+## Ejercicios en espacios equiprobables.
+
+¿Cuál es la probabilidad de obtener una mano de 3 espadas y 2 copas en una baraja española?
+
+```{r}
+n_total = 40 * 39 * 38 * 37 * 36 #condiderando que nos dan las cartas una a una
+n_fav = 10 * 9 * 8 * 10 * 9 #suponiendo que las quiero en orden las 3 espadas y luego las 2 copas
+print(paste0("Probabilidad: ",n_fav / n_total))  
+
+#Ahora haciendolo bien, 3 espadas y 2 copas sin orden
+n_total = 40 * 39 * 38 * 37 * 36
+n_fav = 10 * 9 * 8 * 10 * 9 * factorial(5) / (factorial(3) * factorial(2))
+print(paste0("Probabilidad: ",n_fav / n_total)) 
+```
+
+¿Cuál es la probabilidad de sacar 25 caras en 50 tiradas de una moneda?
+
+```{r}
+n_total = 2^50
+n_fav = choose(50, 25)
+print(paste0("Probabilidad: ",n_fav / n_total))
+```
+
+10 parejas de hermanos se han apuntado a fútbol. Si se hace un equipo de 8 personas al azar, ¿Cuál es la probabilidad de que no haya hermanos en el equipo?
+
+```{r}
+n_total = choose(20, 8)
+# n_fav = (20 * 18 * 16 * 14 * 12 * 10 * 8 * 6)/factorial(8)
+n_fav = 2^8 * choose(10, 8)
+print(paste0("Probabilidad: ",n_fav / n_total))  
+```
+
+10 tarjetas blancas y 15 tarjetas negras se barajan continuamente. Calcula la probabilidad de que la primera tarjeta blanca esté en la quinta posición.
+
+```{r}
+n_total = factorial(25) / factorial(20)
+n_fav = factorial(15)/factorial(11) * 10
+print(paste0("Probabilidad: ", n_fav / n_total))  
+```
+
+En una urna hay 3 bolas rojas numeradas del 1 al 3 y 3 bolas negras numeradas del 1 al 3. Sacamos 2 bolas. Calcular la probabilidad de sacar dos 3 o una bola negra y otra roja.
+
+```{r}
+# 2 treses
+n_total = choose(6, 2)
+n_fav = 
+print(paste0("Probabilidad: ",n_fav / n_total))
+
+# Una negra y una roja
+n_total = choose(6, 2)
+n_fav = 
+print(paste0("Probabilidad: ",n_fav / n_total))
+
+```
+
+Si hay $n$ personas en clase, ¿Cuál es la probabilidad de que ningún par de personas celebren el cumpleaños el mismo día?
+
+```{r}
+n = 50
+n_totales = 365^n
+n_fav = 365
+
+for (i in 2:n){
+  n_fav = n_fav * (365-i + 1)
+  
+}
+laplace = n_fav/n_totales
+
+# Funcion de probabilidad
+
+p = function(n){
+n_totales = 365^n
+n_fav = 365
+
+for (i in 2:n){
+  n_fav = n_fav * (365-i + 1)
+}
+1- n_fav/n_totales
+}
+sapply(2:50, p)
+```

@@ -1,0 +1,115 @@
+---
+title: "Probabilidad condicionada"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introducción teórica.
+
+Dados dos eventos $A,B$ de probabilidad no nula diremos que la probabilidad de $A$ condicionada a $B$ es: 
+
+$$ P(A\mid B) = \dfrac{P(A\cap B)}{P(B)} $$
+
+**Observación**: Dado un espacio de probabilidad con función de probabilidad $P$, entonces la anterior fórmula también es una función de probabilidad para el mismo espacio muestral y espacio de sucesos.
+
+**Ejemplo**: En un experimento juntamos dos dados y una moneda. Para realizar el experimento, primero lanzamos la moneda al aire; si obtenemos una cara se lanza un dado, mientras que si obtenemos una cruz tiramos los dos dados. ¿Cuál es la probabilidad de obtener al menos un 1 en el dado si hemos obtenido cara? ¿Y si hemos obtenido cruz?
+
+```{r}
+p_1_cara = 1/6
+p_1_cruz = 11/36
+```
+
+Dada una partición de eventos $A_1 , \ldots , A_n$ (disjuntos) se puede calcular la **probabilidad total** como:
+
+$$ P(B) = \sum _{i=1} ^n P(B \mid A_i) P(A_i) $$
+
+**Ejemplo**: En el anterior experimento, calcula la probabilidad total de obtener al menos un 1 en un dado.
+
+```{r}
+p_total = p_1_cara * 1/2 + p_1_cruz * 1/2
+```
+
+**Fórmula de Bayes**: 
+
+$$ P(A_j \mid B) = \dfrac{P(B \mid A_j) P(A_j)}{P(B)} $$
+
+**Observación**: La fórmula de Bayes suele presentarse sustituyendo en $P(B)$ la fórmula de la probabilidad total.
+
+**Ejemplo**: En el anterior experimento, calcula la probabilidad de que la moneda hubiera salido cara sabiendo que hemos obtenido 1 en al menos un dado.
+
+```{r}
+p_bayes = (p_1_cara * 1/2) / p_total
+```
+
+Dos eventos $A,B$ se consideran **independientes** si $P(B) = P(B \mid A)$, en tal caso, por la fórmula de Bayes, obtenemos que $P(A\cap B) = P(A)P(B)$.
+
+**Ejemplo**: Un circuito funciona en paralelo cuando al menos uno de sus componentes funciona. La probabilidad de que funcione el componente $i$-ésimo es $p_i$, ¿Cuál es la probabilidad de que funcione el sistema?
+
+$$ P(\text{El sistema funciona}) = 1 - (1-p_1) \cdots (1 - p_n) $$
+
+## Ejercicios probabilidad condicionada.
+
+Al tirar un dado obtenemos un número $n$:
+
+* Si $n\in\{1,4\}$ finalizamos el experimento.
+
+* Si $n\in\{2,5\}$ lanzamos una moneda.
+
+* Si $n\in\{3,6\}$ lanzamos dos monedas.
+
+Se pide:
+
+* Calcular la probabilidad de obtener al menos una cara.
+
+```{r}
+p_total = 2/6 * 0 + 2/6 * 1/2 + 2/6 * 3/4
+print(paste("Probabilidad:", p_total))
+```
+
+* Si al realizar el experimento hemos obtenido al menos una cara, ¿Qué probabilidad hay de haber obtenido en el dado un 3 o un 6?
+
+```{r}
+p_bayes = (3/4 * 1/3)/ p_total
+print(paste("Probabilidad:", p_bayes))
+```
+
+En una urna guardamos 2 bolas blancas, 1 bola negra y en otra urna guardamos 1 bola blanca y 3 bolas negras. Se lanza una moneda al aire, si sale cara sacamos 1 bola de la primera caja, si sale cruz sacamos 1 bola de la segunda caja. Sabiendo que hemos obtenido una bola negra, ¿Qué probabilidad hay de haber obtenido cara en el lanzamiento de moneda?
+
+```{r}
+p_total = 0.5 * 1/3 + 0.5 * 3/4
+p_bayes = 0.5 * 1/3 / p_total
+print(paste("Probabilidad:", p_bayes))
+```
+
+Se realiza un test en el que las preguntas tienen $m$ respuestas y solo una es correcta. Un alumno tiene probabilidad $p$ de saber una respuesta. Si el alumno conoce la respuesta, entonces la acierta. Si el alumno no conoce la respuesta, entonces responde al azar. ¿Qué probabilidad tiene el alumno de saber la respuesta habiendo acertado?
+
+$$ P(\text{saber} \mid \text{acertar}) = ?????? $$
+
+Un laboratorio hace una prueba sanguínea para detectar una enfermedad. Dicho experimento detecta la enfermedad un 99\% de las veces si la enfermedad está realmente presente en la sangre. Sin embargo, existen “falsos positivos”. Hay un 1\% de probabilidad de que a una persona sana se le detecte enfermedad. Sabiendo que el 0,5\% de la población padece la enfermedad, ¿Cuál es la probabilidad de estar enfermo habiendo dado positivo en el test?
+
+```{r}
+p_total = 0.995 * 0.01 + 0.005 * 0.99
+p_bayes = 0.005 * 0.99 / p_total
+print(paste("Probabilidad:", p_bayes))
+```
+
+En un concurso, el concursante elige una puerta entre tres y su premio consiste en lo que se encuentre detrás. Una de ellas oculta un coche, y tras las otras dos hay una cabra. Antes de abrir la elección del concursante, el presentador, que sabe donde esta el premio, abre una de las otras dos puertas y muestra que detrás de ella hay una cabra. El presentador le da entonces al concursante la opción de cambiar la puerta escogida ¿Debe el concursante mantener su elección original o debe escoger la otra puerta?
+
+```{r}
+p_total = 2/3
+print(paste("Probabilidad cambiando:", p_total))
+
+p_total = 1/3
+print(paste("Probabilidad no cambiando:", p_total))
+```
+
+La probabilidad de que gane el equipo “A” un partido es 1/4. Desgraciadamente, solo has podido enterarte del resultado del partido a través de Fermat: Fermat dice que ha ganado el equipo “A”. El problema es que Fermat miente con probabilidad 1/3. ¿Cuál es la probabilidad de que realmente haya ganado “A” si Fermat lo dice?
+
+```{r}
+p_total = 1/3 * 3/4 + 2/3 * 1/4
+p_bayes = 2/3 * 1/4 /p_total
+print(paste("Probabilidad:", p_bayes))
+```

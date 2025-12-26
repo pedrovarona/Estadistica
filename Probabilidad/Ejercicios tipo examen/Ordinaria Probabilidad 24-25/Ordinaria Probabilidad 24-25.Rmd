@@ -1,0 +1,145 @@
+---
+title: "Ordinaria Probabilidad 24-25"
+author: "Pedro Varona"
+date: "2025-10-27"
+output: html_document
+---
+1.1. Resuelve los siguientes problemas cortos:
+ (a) Poincar´e ha quedado con su amigo Grigori en Sol. Grigori suele retrasarse de media 5 minutos, pero
+ nunca se retrasa m´as de 8 minutos. Teniendo en cuenta que Poincar´e llegar´a 3 minutos tarde, ¿Qu´e
+ probabilidad hay de que Grigori est´e en Sol antes que Poincar´e? Aplica una distribuci´on uniforme
+ al tiempo de llegada de Grigori.
+ (b) Si el 99% de los correos no deseados contiene una palabra maliciosa, el 1% de los correos deseados
+ contiene palabras maliciosas y el 2% de los correos recibidos son no deseados, ¿Qu´e probabilidades
+ hay de que un correo electr´onico con palabra maliciosa sea no deseado?
+ 
+```{r}
+# grigori media = 5min y max= 8min (uniforme)
+# poincare = 3 min tarde
+# P(tgrigori < tpoincare)
+
+# Esperanza grigori
+5 = (a + b) / 2
+a = 2
+
+punif(3, 2, 8)
+
+# Apartado B
+(0.02 * 0.99)/(0.99 * 0.02 + 0.98 * 0.01)
+```
+Un sistema de procesamiento en la nube ejecuta dos tareas paralelas (X,Y) que deben completarse
+ para que una transacci´on sea exitosa. Los tiempos de ejecuci´on conjuntos de ambas tareas siguen una
+ distribuci´on con funci´on de densidad:
+ f(x,y) = 2e−(x+2y) para x,y ≥ 0
+ 0
+ en otro caso
+ donde x e y se miden en segundos.
+ (a) Teniendo en cuenta que las tareas se ejecutan en paralelo, calcula la probabilidad de que una
+ transacci´on se complete en menos de 2 segundos. Expresa matem´aticamente esta probabilidad y
+ resu´elvela.
+ (b) Calcula la probabilidad de que la tarea X tarde al menos 1 segundo m´as que la tarea Y. Expresa
+ matem´aticamente esta probabilidad y resu´elvela.
+ (c) Si sabes que la tarea Y ha tardado exactamente 3 segundos, ¿cu´al es la probabilidad de que la tarea
+ X tarde al menos 4 segundos? Expresa matem´aticamente esta probabilidad usando la densidad
+ condicionada y resu´elvela
+ 
+```{r}
+funcion = function(x, y){
+  ifelse(
+    (x >= 0) & (y>=0),
+    2 * exp(-(x+2*y)),
+    0
+  )
+}
+
+integral = integrate2_dxdy(
+  funcion,
+  from_x = function(y) 0,
+  to_x = function(y) 2,
+  from_y = 0,
+  to_y = 2
+)
+integral$value
+
+# Apartado B
+integral = integrate2_dxdy(
+  funcion,
+  from_x = function(y) y + 1,
+  to_x = function(y) Inf,
+  from_y = 0,
+  to_y = Inf
+)
+integral$value
+
+# Apartado c
+# marginalizar y
+
+marginal_y = function(y){
+  integrate(funcion, -Inf, Inf, y=y)$value
+}
+marginal_y = Vectorize(marginal_y)
+
+# P(X >= 4 | y = 3)
+funcion_3 = function(x){
+  funcion(x, y=3) / marginal_y(y = 3)
+}
+
+integrate(funcion_3, 0, 4)$value
+```
+
+3. Sebarajaunabarajaespa˜nola(40cartas,4palos)antesdeiniciarelsiguientejuego.Unjugadorextrae
+ cartascontinuamenteseg´unestasreglas:
+ El jugadortomalaprimeracartadelmazo
+ Si lacartaesdelmismopaloquelaanterior, ladevuelve,barajaelmazoycontin´uaextrayendo
+ Siesdedistintopalo, laretiradelmazoycontin´uaextrayendo
+ Eljugadorganasi lograquedarsesincartas.Esimposibleganarsienalg´unmomentosoloquedancartas
+ delmismopaloenelmazo.
+ ¿Qu´eprobabilidadhaydeganar?
+ Pista:EnR,puedesusar´ındicesnegativosparaeliminarelementosdeunvector.Ejemplo:v=c(‘‘a",
+ ‘‘b",‘‘c",‘‘d");v[-2]
+ 
+```{r}
+baraja = rep(c("O", "C", "E", "B"), each = 10)
+barajado = sample(baraja)
+
+while(length(barajado) > 0){
+  i = 1
+  if (barajado[i] == barajado[i - 1]){
+    barajado = sample(barajado)
+  }
+  else{
+    barajado[-i]
+  }
+}
+
+
+
+
+```
+
+4. Unaaplicaci´onwebprocesapeticionesquepuedenserdedos tipos: peticionesque requierenacceso
+ abasededatos, conprobabilidad0.7;ypeticionesquesolorequierenprocesamientoenmemoria, con
+ probabilidad0.3.Silapetici´onrequiereaccesoabasededatos,eltiempoderespuestasepuedeaproximar
+ porunadistribuci´onNormal demedia200milisegundosyvarianza900. Si lapetici´onsolo requiere
+ procesamientoenmemoria,el tiempoderespuestasepuedeaproximarporunadistribuci´onNormalde
+ media150milisegundosyvarianza400.Sepide:
+ (a)Escribeunafunci´onsimulaterequesttime(nsims)quedevuelvansimsdelasvariablesaleato
+riasrelevantes.
+ (b)Usandosimulaciones,calculael tiempomedioderespuestadeunapetici´on.
+ (c)Calculalaprobabilidaddequeunapetici´ontardem´asde200milisegundosenserprocesadausando
+ simulaciones.
+ (d) Siobservasqueunapetici´onhatardadom´asde160milisegundos,¿cu´ales laprobabilidaddeque
+ hayasidounapetici´onquerequer´ıaaccesoabasededatos?Resuelvemediantesimulaciones
+ 
+ 
+```{r}
+
+
+
+
+
+
+
+```
+
+

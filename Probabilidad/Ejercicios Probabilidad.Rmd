@@ -1,0 +1,881 @@
+---
+title: "Ejercicios Probabilidad"
+author: "Pedro Varona"
+date: "2025-09-10"
+output: html_document
+---
+1. La combinacion de una caja fuerte consiste en 5 cifras distintas ¿Cuantas combinaciones tendras queprobar como maximo para abrirla? ¿Y si cada cifra solo tuviese que ser distinta de la anterior? ¿Y si pudieses repetir cualquier cifra?
+```{r}
+5_cifras_distintas = factorial(10)/factorial(5)
+cifra_distinta_anterior = 10 * 9 * 9 * 9 * 9
+cifras_repetirse = 10^5
+```
+
+2. Dos bolas se sacan al azar de una urna que contiene 6 bolas blancas y 5 negras. ¿Cual es la probabilidad de que una de las bolas sea blanca y la otra negra?
+
+```{r}
+casos_totales = choose(11, 2)
+casos_favorables = choose(6, 1) * choose(5, 1)
+laplace = casos_favorables/casos_totales
+```
+
+3. ¿Cuantas palabras distintas de 8 letras pueden formarse con a,a,a,b,b,c,c,d ?
+```{r}
+factorial(8)/(factorial(3) * factorial(2) * factorial(2) * factorial(1))
+```
+
+
+4. Un comite de tamano 5 se selecciona al azar entre un grupo de 6 hombres y 9 mujeres. ¿Cual es la probabilidad de que el comite consista en 3 hombres y 2 mujeres?
+```{r}
+casos_favorables = choose(6, 3) * choose(9, 2)
+casos_totales = choose(15, 5)
+casos_favorables/casos_totales
+```
+
+5. En una clase de estadıstica hay 6 alumnos de ADE y 4 informaticos. Los alumnos reciben un ranking dependiendo de su nota en un examen. Asumiendo que no hay notas repetidas, ¿Cuantos rankings posibles hay? ¿Cual es la probabilidad de que los 4 informaticos obtengan los 4 primeros puestos del ranking?
+
+```{r}
+# Cuantos rankings posibles hay
+n_total = factorial(10)
+
+# Probabilidad de que 4 
+n_favorable = factorial(4) * factorial(6)
+laplace = n_favorable/n_total
+
+
+```
+
+
+6. En una carrera participan 7 atletas, ¿Cuantas listas de llegada son posibles? Si hay 3 ingleses, 2 franceses, un portugues y un espanol, ¿de cuantas maneras pueden figurar en la lista de llegada las banderas nacionales?
+
+
+```{r}
+# Listas de llegada posibles
+factorial(7)
+
+# Maneras por banderas
+factorial(7)/(factorial(3) * factorial(2) * factorial(1))
+
+```
+
+
+7. Se saca una bola al azar de una caja que contiene 6 bolas rojas, 4 blancas y 5 azules.
+Determina la probabilidad de que la bola sea (a) roja, (b) blanca, (c) azul (d) no sea roja (e) sea roja o blanca.
+
+```{r}
+n_totales = choose(15, 1)
+# Bola roja
+6/15
+
+#Bola blanca
+4/15
+
+# Bola azul
+5/15
+
+# No roja
+1 - 6/15
+
+# Roja o blanca
+6/15 + 4/15
+
+
+
+```
+
+8. ¿Cual es la probabilidad de obtener al menos un 3 en dos lanzamientos de un dado balanceado? (nos referimos al numero de 3s sacados, no a la suma)
+
+```{r}
+totales = 6 * 6
+favorables = 6 + 6 - 1
+favorables/totales
+```
+
+9. Un grupo de 5 chicos y 10 chicas quieren sentarse en un banco.
+(a) ¿Cual es la probabilidad de que la cuarta persona sea un chico?
+(b) ¿Cual es la probabilidad de que la decimo-segunda posici´on est´e ocupada por un chico?
+(c) ¿Cual es la probabilidad de que un chico en particular est´e en la tercera posici´on?
+
+```{r}
+# Apartado A
+casos_totales = factorial(15)
+casos_favorables = choose(5, 1) * factorial(14)
+casos_favorables/casos_totales
+
+# Apartado B
+casos_totales = factorial(15)
+casos_favorables = choose(5, 1) * factorial(14)
+casos_favorables/casos_totales
+
+# Apartado C
+casos_totales = factorial(15)
+casos_favorables = 1/5 * choose(5, 1) * factorial(14)
+casos_favorables/casos_totales
+
+```
+
+10. Una caja A contiene cinco canicas rojas y tres azules, una caja B contiene dos rojas y tres azules. Se coje una canica al azar de cada caja:
+(a) Halla la probabilidad p de que ambas sean rojas.
+(b) Halla la probabilidad p de que una sea roja y otra azul
+
+```{r}
+# Apartado A
+5/8 * 2/5
+
+# Apartado B (por probabilidad, como un arbol)
+5/8 * 3/5 + 3/8 * 2/5
+
+
+# Como el teacher en su solucion del cuadernillo (por numero de casos)
+totales = choose(8, 1) * choose(5, 1)
+favorables = choose(5, 1) * choose(3, 1) + choose(3, 1) * choose(2, 1)
+favorables/totales
+
+```
+11. Un armario tiene 10 pares de zapatos. Si seleccionamos 8 zapatos al azar, Cual es la
+probabilidad de (a) no seleccionar un par completo, (b) seleccionar exactamente un par completo
+
+```{r}
+# Apartado A
+favorables = 2^8 * choose(10, 8)
+totales = choose(20, 8)
+favorables/totales
+
+# Apartado B
+totales = choose(20, 8)
+favorables = choose(10, 1) * choose(9, 6) * 2^6
+favorables/totales
+
+```
+
+
+12. En una lınea estan acomodadas 5 canicas rojas, 2 blancas y 3 azules. Si las canicas del
+mismo color son indistinguibles. ¿Cuantas ordenaciones distintas existen?
+
+```{r}
+factorial(10)/(factorial(5) * factorial(2) * factorial(3))
+
+```
+13. ¿Cuantas “hamburguesas” distintas pueden hacerse con carne, lechuga, tomate, queso y bacon? Entiendase por hamburguesa la combinacion de los anteriores ingredientes, habiendo al menos uno de ellos presente
+
+```{r}
+2^5-1
+```
+14. ¿De cuantas maneras posibles se pueden sentar 7 personas alrededor de una mesa redonda
+si (a) se pueden sentar en cualquier lugar, (b) 2 personas se llevan mal y no pueden sentase juntas
+
+```{r}
+# Apartado A
+factorial(7)/7
+
+
+# Apartado B
+# Siento a uno y dejo el que le cae mal fuera del recuento. Hago el choose para colocar a mi lado a 2 random que me caen guay. Luego coloco a los otros 4 de forma aleatoria y luego el que me cae mal se sienta en el hueco restante. Por ultimo multiplico por dos ya que igual que puedo hacer esto con el bueno dentro y el malo fuera, lo hago viceversa
+choose(5, 2) * factorial(4) * 2
+
+```
+
+
+15. Una caja contiene 8 bolas rojas, 3 blancas y 9 azules. Si se sacan 3 bolas al azar sin
+reemplazamiento, determina la probabilidad de que (a) las 3 sean rojas, (b) las 3 sean blancas, (c) 2 sean rojas y 1 blanca, (d) al menos 1 sea blanca, (e) se saque una de cada color, (f) se saquen en el siguiente orden: roja, blanca, azul
+
+
+```{r}
+# Apartado A
+favorable = choose(8, 3)
+total = choose(20, 3)
+favorable/total
+
+# o tambien
+8/20 * 7/19 * 6/18
+
+
+# Apartado B
+favorable = choose(3, 3)
+total = choose(20, 3)
+favorable/total
+
+# o tambien
+3/20 * 2/19 * 1/18
+
+
+# Apartado C
+favorable = choose(8, 2) * choose(3, 1)
+total = choose(20, 3)
+favorable/total
+
+
+# Apartado D
+favorable = choose(17, 3)
+total = choose(20, 3)
+total = favorable/total
+
+1 - total
+
+
+# Apartado E
+favorable = choose(8, 1) * choose(3, 1) * choose(9, 1)
+total = choose(20, 3)
+favorable/total
+
+
+# Apartado F
+8/20 * 3/19 * 9/18
+```
+
+
+
+16. A tarjetas blancas y b tarjetas negras se barajan conjuntamente.
+(a) Calcular la probabilidad de que la primera tarjeta blanca este en la posicion k.
+(b) En general, calcular la probabilidad de que la i-esima tarjeta blanca ocupe la posicion k
+
+```{r}
+# Apartado A
+funcion = function(a, b, k){
+  n = a + b
+    caso_favorable = factorial(b)/factorial(b-(k- 1)) * a * factorial(n - k)
+    caso_total= factorial(n)
+    caso_favorable/caso_total
+}
+
+
+```
+
+
+18. Se lanzan dos monedas y se tira un dado tantas veces como caras se hayan obtenido. (a) Halla la
+probabilidad de que la suma de las puntuaciones sea 6. (b) Si sabemos que el resultado del juego es que los dados han sumado 6, ¿Cu´al es la probabilidad de haber obtenido 0 caras, 1 cara o 2 caras?
+
+```{r}
+# Apartado A
+# si 0 caras P = 0
+# Si 1 cara P = 1/6
+# Si 2 caras P = 5/36
+# Salgan 0 caras P = 1/4
+# Salgan 1 caras P = 2/4
+# Salgan 2 caras P = 1/4
+
+total = 1/4 * 0 + 2/4 * 1/6 + 1/4 * 5/36
+# Apartado B
+
+p_bayes_0 = (1/4 * 0) / total
+p_bayes_1 = (2/4 * 1/6) / total
+p_bayes_2 = (1/4 * 5/36) / total
+```
+
+
+
+
+19. El 52% de los estudiantes de una universidad son mujeres. El 5% de los estudiantes estudian
+informatica. El 2% de los estudiantes son mujeres que estudian informatica. Si un estudiante es elegido al azar, calcula la probabilidad de que
+(a) el estudiante sea mujer, dado que el estudiante hace informatica.
+(b) el estudiante hace inform´atica, dado que el estudiante sea mujer
+```{r}
+# Apartado A
+total = 0.05
+bayes = 0.02/total
+bayes
+
+# Apartado b
+total = 0.02 * 0.52 + 0.48 * 0.03
+bayes = 0.52 * 0.02/total
+bayes
+
+```
+
+
+20 Pidesatuamigoquerieguetuplantamientrasest´asdevacaciones. Sinagua, laplanta
+ morir´aconprobabilidad0.8,mientrasqueconagualasprobabilidadessereducenal0.15.Estasseguro
+ al90%dequetuamigoseacordar´aderegarlaplanta.
+ (a) ¿Cu´aleslaprobabilidaddequelaplantavivacuandovuelvas?
+ (b) Si laplantaest´amuerta, ¿cu´al es laprobabilidaddeque tuamigosehayaolvidadode regar la
+ planta?
+```{r}
+# Apartado A
+0.9 * 0.85 + 0.1 * 0.2
+
+# Apartado B
+total = 0.8 * 0.1 + 0.9 * 0.15
+bayes = 0.8 * 0.1 / total
+bayes
+
+```
+21. El c´ancer de pr´ostata es muy com´un entre los hombres. Para intentar detectarlo, los
+ m´edicos miden los niveles de la prote´ına llamada ant´ıgeno prost´atico espec´ıfico (PSA). Aunque niveles
+ altos de PSA suelen indicar c´ancer, el test es poco fiable. La probabilidad de que un hombre sano sea
+ diagnosticado con niveles altos de PSA es aproximadamente 0.135, y esta probabilidad se incrementa
+ hasta 0.268 si el hombre tiene c´ancer. Si un m´edico, bas´andose en otros factores, cree que un hombre
+ tiene c´ancer con probabilidad 0.7, cu´al es la probabilidad condicional de que tenga c´ancer dado que
+ (a) el test indica un nivel elevado de PSA.
+ (b) el test no indica un nivel elevado de PSA
+ 
+```{r}
+# Apartado A
+total = 0.135 * 0.3 + 0.7 * 0.268
+bayes = 0.7 * 0.268 /total
+bayes
+
+# Apartado B
+total = 0.865 * 0.3 + 0.7 * 0.732
+bayes = 0.7 * 0.732 /total
+bayes
+
+```
+22. Se tiran dos dados. Sea E el evento “La suma de los dos dados es 7”:
+ (a) Muestra que E es independiente del evento “el primer dado es 4”.
+ (b) Muestra que E es independiente del evento “el segundo dado es 3”
+ 
+```{r}
+# P(E y A) * P(E) * P(A)
+E = 6/36
+A = 1/6 * 6/6
+
+EyA = 1/36
+
+E * A
+EyA
+
+
+# Apartado B
+E = 6/36
+A = 6/6 * 1/6
+
+EyA = 1/36
+E*A
+EyA
+
+```
+
+24. Un tipo de misil alcanza su objetivo con probabilidad p = 1/3.
+ (a) Si se lanzan 3 misiles, halla la probabilidad de que que se alcance el objetivo al menos una vez.
+ (b) Hallar el n´umero de misiles que se deben lanzar de tal forma que haya al menos un 90% de probabilidad de alcanzar el objetivo.
+
+```{r}
+# Apartado a
+1- dbinom(0, 3, 1/3)
+
+# Apartado b
+misiles_necesarios <- function(){
+  n = 0
+  while(prob < 0.9){
+    n = n + 1
+    prob = 1 - dbinom(0, n, 1/3)
+  }
+  return(n)
+}
+
+```
+
+
+
+# Ni ideaaaa
+25.  Una mujer tiene n llaves, una de las cuales abre su casa. Si prueba las llaves al azar, descartando las que no funcionan, ¿Cu´al es la probabilidad de que abra su puerta al intento k-´esimo? ¿Y si no hubiese descartado llaves
+```{r}
+n = 5
+k = 3
+
+dbinom(k, n, 1/n)
+
+
+
+
+
+```
+
+
+26. Cuando los caballos A, B, C corren juntos, sus respectivas probabilidades de ganar son 0.3, 0.5 y 0.2.
+ Si los caballos corren 3 veces,
+ (a) Halla la probabilidad de que el mismo caballo gane las 3 carreras.
+ (b) Halla la probabilidad de que cada uno gane una carrera.
+
+```{r}
+0.3 * 0.3 * 0.3 + 0.5 * 0.5 * 0.5 + 0.2 * 0.2 * 0.2
+
+# Apartado b
+0.3 * 0.5 * 0.2 * factorial(3)
+
+```
+27. Problema de Monty Hall: En un concurso de televisi´on, el concursante elige una puerta entre tres y su premio consiste en lo que se encuentre detr´as. Una de ellas oculta un coche, y tras las otras dos hay una cabra. Antes de abrir la elecci´on del concursante, el presentador, que sabe donde esta el premio, abre una de las otras dos puertas y muestra que detr´as de ella hay una cabra. El presentador le da entonces al concursante la opci´on de cambiar la puerta escogida (a) ¿Debe el concursante mantener su elecci´on original o debe escoger la otra puerta? (b) ¿Hay alguna diferencia? Resuelve el problema matematicamente y mediante simulaciones.
+ 
+```{r}
+# Apartado A
+
+# Manter
+ganadas = 0
+perdidas = 0
+
+cambiar = replicate(1000, {
+  elijo = sample(1:3, 1)
+  ganadora = sample(1:3, 1)
+  if(elijo == ganadora){
+    ganadas = ganadas + 1
+  }
+  return(ganadas)
+})
+mean(cambiar)
+
+# cambiar
+ganadas = 0
+perdidas = 0
+
+cambiar = replicate(1000, {
+  elijo = sample(1:3, 1)
+  ganadora = sample(1:3, 1)
+  if(elijo != ganadora){
+    ganadas = ganadas + 1
+  }
+  return(ganadas)
+})
+mean(cambiar)
+
+
+
+
+```
+
+29. Un aparcamiento tiene N plazas. Afortunadamente, hemos encontrado la ´ultima plaza libre y hemos podido aparcar entre dos plazas (no hemos situado el coche en los extremos). Cuando volvemos al coche, encontramos que, de los N coches, solo quedan r coches aparcados (incluıdo el nuestro). ¿Cu´al es la probabilidad de que nuestros dos vecinos se hayan marchado? Razona detalladamente, usando combinatoria, cu´al es la respuesta. Simplifica al m´aximo las expresiones combinatorias que emplees. 
+
+```{r}
+N = 8
+r = 4
+
+fav = choose(N - 3, r -1)
+tot = choose(N - 1 , r - 1)
+fav/tot
+
+((N -r) * (N -r -1))/((N - 1) * (N -2))
+
+```
+30. Tres prisioneros son informados de que uno de ellos ha sido elegido al azar para ser liberado,
+ mientras que a los otros dos solo se les rebajar´a la condena. El prisionero A pregunta al carcelero en privado a cu´al de sus compa˜neros se le rebajar´a la condena, afirmando que puede divulgar la informaci´on sin problemas ya que ´el ya sabe que al menos uno de sus compa˜neros estar´a menos tiempo en la c´arcel. El carcelero se niega a contestar, razonando que si A conoce cu´al de sus compa˜neros tendr´a una rebaja en la condena, sus probabilidades de ser liberado se incrementan de 1/3 a 1/2, ya que el estar´ıa en el grupo de dos prisioneros que pueden ser liberados. ¿Es correcto el razonamiento del carcelero?
+ 
+```{r}
+ganadas = 0
+perdidas = 0
+
+ganar = replicate(1000, {
+  elijo = sample(1:3, 1)
+  ganadora = sample(1:3, 1)
+  if(elijo == ganadora){
+    ganadas = ganadas + 1
+  }
+  return(ganadas)
+})
+mean(ganar)
+
+```
+
+31. En una competici´on al mejor de 7, el primer equipo que llegue a 4 victorias gana. Sup´on
+ que en cada partido el equipo A gana de forma independiente con probabilidad p.
+ (a) Si un equipo va ganando 3 a 0, ¿cu´al es la probabilidad de que sea el equipo A el que va ganando?
+ (b) Si un equipo va ganando 3 a 0, ¿cu´al es la probabilidad de que sea este equipo el que gane la
+ competici´on?
+ (c) Si p = 1/2, ¿cu´al es la probabilidad de que el equipo que gane el primer juego gane la competici´on
+ 
+ 
+```{r}
+# Apartado A
+p=0.5
+favorables = p^3
+totales = p^3 + (1-p)^3
+pa = favorables/totales
+
+pb = 1 - pa
+
+# Apartado B
+pa*(1-(1- p)^4) + pb*(1-(p^4))
+
+
+# Apartado C
+p=0.5
+favorables = p^1
+totales = p^1 + (1-p)^1
+pa = favorables/totales
+
+pb = 1 - pa
+
+# Apartado B
+
+
+
+
+
+```
+32. La probabilidad de que gane el equipo “A” un partido es 1/4. Desgraciadamente, solo has podido
+ enterarte del resultado del partido a trav´es de Fermat: Fermat dice que ha ganado el equipo “A”. El
+ problema es que Fermat miente con probabilidad 1/3. ¿Cu´al es la probabilidad de que realmente haya
+ ganado “A” si Fermat lo dice?
+
+
+```{r}
+fav = 1/4 * 2/3
+total = 1/4 * 2/3 + 1/3 * 3/4
+fav/total
+
+
+```
+33. Sean A, B, C eventos tales que P(A) = 0.2, P(B) = 0.3, P(C) = 0.4. Calcula la probabilidad
+ de que ocurra al menos un evento de A o B si:
+ (a) A y B son mutuamente excluyentes.
+ (b) A y B son independientes.
+ Calcula la probabilidad de que ocurran los eventos A, B, C si
+ (c) A, B, y C son independientes.
+ (d) A, B y C son mutuamente excluyentes.
+ 
+```{r}
+# Apartado A
+# P(A y B) = 0
+0.2 + 0.3
+
+# Apartado B
+# P(A U B) 
+0.2 + 0.3 - (0.2 * 0.3)
+ 
+# Apartado C
+0.2 * 0.3 * 0.4
+
+# Apartado D
+0
+ 
+ 
+```
+34. Calcula mediante simulaciones la probabilidad de obtener exactamente una cara en cuatro lanzamientos de una moneda.
+```{r}
+contador = 0
+funcion = replicate(10000, {
+monedas = sample(0:1, 4, replace = TRUE)
+caras = sum(monedas)
+if(caras == 1){
+  contador = contador + 1
+}
+return(contador)
+})
+mean(funcion)
+
+
+```
+
+
+ 
+ 
+35. Calcula matematicamente y mediante simulaciones la probabilidad de obtener un numero
+entero entre 1 y 5000 que sea divisible por 4, 7, o 10
+
+```{r}
+
+
+funcion = replicate(1000, {
+numero = sample(1:5000, 1)
+numero %% 4 == 0 || numero %% 7 == 0 || numero %% 10 == 0
+
+
+})
+mean(funcion)
+
+```
+
+
+36. Calcula matematicamente y con simulaciones cual es la probabilidad de obtener al menos
+un 8 en la tirada de dos dados (es decir, que la suma de ambos dados ≥ 8).
+
+```{r}
+
+experimento = replicate(1000, {
+dados = sample(1:6, 2, replace = TRUE)
+suma = sum(dados)
+suma >= 8
+})
+mean(experimento)
+
+```
+37. Lee la ayuda del comando sample. Imagınate un dado de 4 lados cargado, de forma que
+toma los valores 1, 2, 3, 4 con probabilidades 0.1, 0.2, 0.3, 0.4
+
+
+```{r}
+sample(1:4, 1, replace = TRUE, prob = c(0.1, 0.2, 0.3, 0.4))
+```
+38.Tenemos n sillas y k personas (1 < k ≤ n) se sientan al azar en estas n sillas (se sobreentiende que todas las personas se sientan en sillas distintas). Razonar cual es la probabilidad de que las k personas esten sentadas juntas. Pista: piensa en como programarıas un metodo sencillo que generase simulaciones de los casos totales y los casos favorables; por ejemplo, una simulacion de los casos favorables podrıa ser X X X , donde X simboliza un sitio ocupado y un sitio libre. Resuelve el problema analıticamente y mediante simulaciones
+
+
+```{r}
+
+prob_sillas = function(n, k){
+  sillas = 1:n
+funcion = replicate(1000, {
+asignacion = sample(sillas, k)
+max(asignacion) -min(asignacion) == k - 1
+
+
+})
+mean(funcion)
+}
+```
+
+
+39. alcula matem´aticamente y con simulaciones las siguientes probabilidades, relacionadas con una baraja francesa (4 palos de 13 cartas cada uno). Considera que una mano consiste en 5 cartas.
+(a) Un p´oker (4 cartas del mismo valor)
+(b) Un full (un tr´ıo y una pareja de cartas del mismo valor).
+(c) Un tr´ıo (Ojo con los p´okers y los fulls).
+(d) Una escalera (cinco cartas de valores consecutivos). Se admite que el as vaya antes del dos o despu´es
+del rey.
+(e) Una escalera de color (cinco cartas del mismo palo y valores consecutivos)
+
+
+
+```{r}
+# Apartado A
+baraja = paste0(c("A", "B", "C", "D"), rep(1:13, each = 4))
+experimento = replicate(100000, {
+  mano = sample(baraja, 5)
+  mano = substr(mano, start = 2, stop = 3)
+  mano = factor(mano, levels = 1:13)
+  mano = table(mano)
+  any(mano == 4)
+})
+mean(experimento)
+
+# Apartado B
+baraja = paste0(c("A", "B", "C", "D"), rep(1:13, each = 4))
+experimento = replicate(100000, {
+  mano = sample(baraja, 5)
+  mano = substr(mano, start = 2, stop = 3)
+  mano = factor(mano, levels = 1:13)
+  mano = table(mano)
+  any(mano == 2) & (mano == 3)
+})
+mean(experimento)
+
+```
+
+ 
+ 
+41.  (a) Tu vecino acaba de tener dos beb´es. De alguna forma, te enteras de que uno de sus beb´es es una ni˜na. ¿Cu´al es la probabilidad de que el otro beb´e tambi´en sea ni˜na?
+ 
+(b) Otro de tus vecinos acaba de tener dos beb´es. El vecino acuerda visitarte con uno de sus beb´es. Para ello, elige a uno de los beb´es al azar y se lo lleva consigo a la visita. El beb´e resulta ser una ni˜na. ¿Cu´al es la probabilidad de que el otro beb´e tambi´en sea ni˜na? (Pista: el resultado no es el mismo que en (a) por la elecci´on del beb´e. ¡Dibuja un ´arbol de decisi´on!)
+ 
+```{r}
+# Apartado A
+1/3
+
+# Apartado B
+1/2
+
+```
+42. En un torneo de baloncesto participan 20 equipos con los que se forman 2 grupos de 10 equipos cada
+ uno. Entre estos equipos hay 4 mucho mejores que los dem´as.
+ (a) Calcula la probabilidad de que 2 de los mejores est´en en un grupo y los otros 2 en el otro. Resuelve
+ el problema matem´aticamente y con simulaciones.
+ (b) Calcula la probabilidad de que los 4 mejores se encuentren en el mismo grupo. Resuelve el problema
+ matem´aticamente y haciendo simulaciones en R.
+
+
+```{r}
+# Apartado A
+contador=0
+funcion = replicate(100000, {
+  nombre = sample(c(rep(0,16), rep(1,4)), 10)
+  if(sum(nombre) == 2){
+    contador = contador + 1
+  }
+  return(contador)
+})
+mean(funcion)
+
+# Apartado B
+contador=0
+funcion = replicate(100000, {
+  nombre = sample(c(rep(0,16), rep(1,4)), 10)
+  if(sum(nombre) == 4 ||sum(nombre) == 0){
+    contador = contador + 1
+  }
+  return(contador)
+})
+mean(funcion)
+```
+
+43.En un laboratorio se analiza a un grupo de personas de las cuales se sabe que el 5% de las cuales tienen la enfermedad de Hansen.La prueba detecta la enfermedad de Hans en al 98% de las personas que padecen la enfermedad, pero da falsos positivos al 3% de las que no la padecen. ¿Cuales la probabilidad de que alguien que de positivo en la prueba de la enfermedad de Hans en la tenga realmente?
+ 
+```{r}
+total = 0.98 * 0.05 + 0.95 * 0.03
+(0.98 * 0.05)/total
+
+```
+
+44. Secolocanalazarhbolas igualesenkurnas(h>k)numeradasdel1alk. Razonacu´ales lafunci´on
+ deprobabilidadconjuntade lasvariablesaleatoriasU1,U2, ...,Uk; siendoUi eln´umerodebolasenla
+ urnai-´esima.
+ 
+```{r}
+
+
+
+
+
+
+```
+
+45.Enelascensordeunedificioconbajoy10plantasentranenelbajocuatropersonas.Cadapersonase
+ bajaindependientementededondesebajenlasdem´asyconigualprobabilidadencadaplanta.Calcula
+ laprobabilidad,anal´ıticamenteymediantesimulaciones,deque:
+ (a)Lascuatropersonassebajenenlad´ecimaplanta.
+ (b)Lascuatropersonassebajenenlamismaplanta
+ (c) Las cuatro se bajen en plantas distintas
+ 
+```{r}
+# Apartado A
+contador = 0
+funcionapartadoa = replicate(10000, {
+  persona1 = sample(1:10, 1)
+  persona2 = sample(1:10, 1)
+  persona3 = sample(1:10, 1)
+  persona4 = sample(1:10, 1)
+  
+  if(persona1 == 10 && persona2 == 10 && persona3 == 10 && persona4 == 10){
+      contador = contador + 1
+  }
+  return(contador)
+})
+mean(funcionapartadoa)
+1/10 * 1/10 * 1/10 * 1/10
+
+# Apartado B
+contador = 0
+funcionapartadoa = replicate(10000, {
+  persona1 = sample(1:10, 1)
+  persona2 = sample(1:10, 1)
+  persona3 = sample(1:10, 1)
+  persona4 = sample(1:10, 1)
+  
+  if(persona1 == persona2 && persona2 == persona3 && persona3 == persona4){
+      contador = contador + 1
+  }
+  return(contador)
+})
+mean(funcionapartadoa)
+1/10 * 1/10 * 1/10 * 1/10 * 10
+
+# Apartado C
+contador = 0
+funcionapartadoa = replicate(10000, {
+  persona1 = sample(1:10, 1)
+  persona2 = sample(1:10, 1)
+  persona3 = sample(1:10, 1)
+  persona4 = sample(1:10, 1)
+  
+  if(persona1 != persona2 && persona2 != persona3 && persona3 != persona4 && persona1 != persona3 && persona1 != persona4 && persona2 != persona4){
+      contador = contador + 1
+  }
+  return(contador)
+})
+mean(funcionapartadoa)
+10/10 * 9/10 * 8/10 * 7/10
+ 
+```
+
+47. En un proceso de fabricaci´on un lote de 100 piezas contiene 30 piezas defectuosas. Se selecciona sin
+ reemplazamiento una muestra de 10 piezas. ¿Cu´al es la probabilidad de que 4 de ellas sean defectuosas?
+
+```{r}
+contador=0
+funcion = replicate(100000, {
+  piezas = sample(c(rep(0, 70), rep(1,30)), 10)
+  if(sum(piezas) == 4){
+    contador = contador + 1
+  }
+
+  return(contador)
+})
+mean(funcion)
+
+```
+
+ 48. Cuatro furgonetas que transportan mercanc´ıas distintas deben hacer sus entregas en cuatro destinos
+ distintos. ¿Cu´al es la probabilidad de que al menos una entrega sea correctas si se realiza el reparto al
+ azar? Resuelve el problema anal´ıticamente y con simulaciones en R.
+ 
+ 
+```{r}
+
+contador = 0
+funcion = replicate(100000, {
+  reparto1 = sample(1:4, 1)
+  reparto2 = sample(1:4, 1)
+  reparto3 = sample(1:4, 1)
+  reparto4 = sample(1:4, 1)
+  
+  if(reparto1 == 1 || reparto2 == 2 || reparto3 == 3 || reparto4 == 4){
+      contador = contador + 1
+  }
+  return(contador)
+})
+mean(funcion)
+
+
+```
+49. Diez personas van seleccionando seg´un un turno establecido una carta de oros al azar y con reemplaza
+miento. El juego finaliza cuando sale el as y se contin´ua, hasta que alguien gane, repitiendo rondas en
+ el orden establecido. Calcula la probabilidad de que el juego continue despu´es de dos rondas. Pista: usa
+ probabilidades condicionales para calcular la probabilidad de que ”el as no haya salido tras n extrac
+ciones” en funci´on de los resultados anteriores; luego usa R para realizar los c´alculos.
+
+```{r}
+contador = 0
+funcion = replicate(100000, {
+  sumas = sample(c(rep(0, 9), rep(1,1)), 20, replace = TRUE)
+  if(sum(sumas) == 0){
+    contador = contador + 1
+    
+  }
+  return(contador)
+})
+mean(funcion)
+
+```
+
+
+
+50.  Un jurado de tres personas tiene tres miembros. Dos de ellos son “serios”, con probabilidad p de tomar
+ la decisi´on correcta. El tercer miembro del jurado es un “troll”, por lo que lanza una moneda para tomar
+ su decisi´on. El veredicto final se hace por mayor´ıa. Un jurado de una sola persona tiene probabilidad
+ p de tomar la decisi´on correcta. ¿Qu´e jurado tiene m´as probabilidades de tomar la decisi´on correcta (el
+ de tres personas o el de una sola persona)?
+ 
+```{r}
+p=0.5
+# 2 serios coinciden
+p^2
+
+# 2 serios discrepan
+2 * p*(1- p) * 1/2
+
+p^2 + 2 * p*(1-p) * 1/2
+
+```
+
+
+51. En una fiesta, cada individuo tiene una copa con su nombre. Snedecor deja su copa sobre una mesa
+ libre y, tras un rato, se encuentra con que encima de la mesa hay n copas y que ya no sabe cu´al es la
+ suya. Snedecor tiene que ir mirando una por una cada copa para ver cu´al es la suya (con cuidado de
+ ir apartando las copas que ya ha comprobado). Sabiendo que con una probabilidad p la copa se la ha
+ llevado previamente otra persona por error, razona detalladamente cu´al es probabilidad de que Snedecor
+ compruebe m´as de k copas (si Snedecor encuentra su copa al k-´esimo intento este no ser´ıa un “suceso
+ exitoso” porque no ha comprobado m´as de k copas). Pista: razona por casos.
+ 
+ 
+```{r}
+
+
+
+
+
+
+```
+
+
+ 
+
+
+
+
+
+ 
