@@ -1,0 +1,432 @@
+---
+title: "Test de hipótesis (2)"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, out.width="50%", fig.align = "center")
+```
+
+# Test de hipótesis sobre la media
+
+Vamos a considerar una población $X\sim N(\mu,\sigma ^2)$ sobre la que vamos a efectuar un test de hipótesis obteniendo intervalos de confianza y p-valores, con una significancia del 1%.
+
+## Desviación típica poblacional $\sigma$ conocida
+
+Obtenemos una muestra de una población normal $N(\mu = 15,\sigma ^2 = 2^2)$:
+
+```{r}
+x = rnorm(100, mean = 15, sd = 2)
+```
+
+Consideramos el siguiente test de hipótesis:
+
+$$ \begin{cases} H_0 : \, \mu = 16 \\
+H_a : \, \mu \neq 16
+\end{cases}$$
+
+Si conocemos la desviación típica poblacional $\sigma = 2$, entonces utilizamos como estadístico (mirar chuletario):
+
+$$ \bar{X} \sim N\left( \mu , \frac{\sigma^2}{n}\right)$$
+
+```{r}
+# Media muestral (estadístico para p-value)
+m = mean(x)
+# Tamaño muestral
+n = length(x)
+# Desviación típica poblacional
+sigma = 2
+```
+
+Situación gráfica del estadístico:
+
+```{r}
+x_rango = seq(14,18,by = 0.01)
+y = dnorm(x_rango, mean = 16, sd = sigma/sqrt(n))
+plot(x_rango,y, type = "l")
+lines(c(m,m),c(0,2), col = "red")
+```
+
+Como se trata de un test de dos colas el p-valor asociado será:
+
+```{r}
+if( m <= 16){
+  p = 2 * pnorm(m, mean = 16, sd = sigma/sqrt(n))
+}else{
+  p = 2 *(1 - pnorm(m, mean = 16, sd = sigma/sqrt(n)))
+}
+p
+```
+
+Si obtenemos $p < \alpha$ entonces se rechaza la $H_0$. Además, podemos calcular un intervalo de confianza para la media:
+
+```{r}
+# Significancia
+a = 0.01
+# Calculamos el estadístico asociado al IC
+z = qnorm(1-a/2)
+# Calculamos el IC
+x1 = m - z * sigma / sqrt(n)
+x2 = m + z * sigma / sqrt(n)
+c(x1, x2)
+```
+
+Situación gráfica del estadístico asociado al IC:
+
+```{r}
+z_rango = seq(-4,4,by = 0.01)
+y = dnorm(z_rango)
+plot(z_rango,y, type = "l")
+lines(c(z,z),c(0,0.4), col = "blue")
+lines(c(-z,-z),c(0,0.4), col = "blue")
+```
+
+## Desviación típica poblacional $\sigma$ desconocida
+
+Obtenemos una muestra de una población normal $N(\mu = 15,\sigma ^2 = 2^2)$:
+
+```{r}
+x = rnorm(100, mean = 15, sd = 2)
+```
+
+Consideramos el siguiente test de hipótesis:
+
+$$ \begin{cases} H_0 : \, \mu = 16 \\
+H_a : \, \mu \neq 16
+\end{cases}$$
+
+Si **no** conocemos la desviación típica poblacional $\sigma$, entonces utilizamos como estadístico:
+
+$$ T = \frac{\bar{X}-\mu}{\hat{S} / \sqrt{n}}$$
+
+```{r}
+# Media muestral
+m = mean(x)
+# Tamaño muestral
+n = length(x)
+# Desviación típica muestral
+s = sd(x)
+# Estadístico
+t = (m-16) / (s / sqrt(n))
+```
+
+Situación gráfica del estadístico:
+
+```{r}
+t_rango = seq(-5,5,by = 0.01)
+y = dt(t_rango, df = n-1)
+plot(t_rango,y, type = "l")
+lines(c(t,t),c(0,0.4), col = "red")
+lines(c(-t,-t),c(0,0.4), col = "red")
+```
+
+Como se trata de un test de dos colas el p-valor asociado será:
+
+```{r}
+if( t <= 0){
+  p = 2 * pt(t, df = n-1)
+}else{
+  p = 2 *(1 - pt(t, df = n-1))
+}
+p
+```
+
+Si obtenemos $p < \alpha$ entonces se rechaza la $H_0$. Además, podemos calcular un intervalo de confianza para la media:
+
+```{r}
+# Significancia
+a = 0.01
+# Calculamos el estadístico asociado al IC
+t_IC = qt(1-a/2, df = n-1)
+# Calculamos el IC
+x1 = m - t_IC * s / sqrt(n)
+x2 = m + t_IC * s / sqrt(n)
+c(x1, x2)
+```
+
+Situación gráfica del estadístico asociado al p-valor y del estadístico asociado al IC:
+
+```{r}
+t_rango = seq(-5,5,by = 0.01)
+y = dt(t_rango, df = n-1)
+plot(t_rango,y, type = "l")
+lines(c(t,t),c(0,0.4), col = "red")
+lines(c(-t,-t),c(0,0.4), col = "red")
+lines(c(t_IC,t_IC),c(0,0.4), col = "blue")
+lines(c(-t_IC,-t_IC),c(0,0.4), col = "blue")
+```
+
+Mismo test realizado con `t.test()`:
+
+```{r}
+t.test(x, mu = 16, conf.level = 0.99)
+```
+
+# Test de hipótesis sobre dos medias
+
+Vamos a considerar dos poblaciones $X_1\sim N(\mu_1,\sigma _1 ^2)$ y $X_2\sim N(\mu_2,\sigma _2^2)$ sobre la que vamos a efectuar un test de hipótesis obteniendo intervalos de confianza y p-valores, con una significancia del 1%.
+
+## Desviaciones típicas $\sigma_1, \sigma_2$ conocidas
+
+Obtenemos una muestra de dos poblaciones normales:
+
+```{r}
+x1 = rnorm(100, mean = 15, sd = 2)
+x2 = rnorm(100, mean = 17, sd = 4)
+```
+
+Consideramos el siguiente test de hipótesis:
+
+$$ \begin{cases} H_0 : \, \mu_1 = \mu _2 \\
+H_a : \, \mu_1 \neq \mu _2
+\end{cases}$$
+
+Si conocemos la desviación típica poblacional $\sigma_1 = 2$ y $\sigma_2 = 4$, entonces utilizamos como estadístico:
+
+$$ \bar{X_1} - \bar{X_2}  \sim N \left( \mu_1 - \mu _2, \frac{\sigma_1 ^2}{n_1} + \frac{\sigma_2 ^2}{n_2} \right)$$
+
+
+```{r}
+# Media muestral
+m1 = mean(x1)
+m2 = mean(x2)
+# Tamaño muestral
+n1 = length(x1)
+n2 = length(x2)
+# Desviación típica poblacional
+sigma1 = 2
+sigma2 = 4
+# Estadístico
+dif = m1 - m2 
+```
+
+Situación gráfica del estadístico:
+
+```{r}
+dif_rango = seq(-5,5,by = 0.01)
+y = dnorm(dif_rango, mean = 0, sd = sqrt(sigma1^2 / n1 + sigma2^2 / n2) )
+plot(dif_rango,y, type = "l")
+lines(c(dif,dif),c(0,0.9), col = "red")
+lines(c(-dif,-dif),c(0,0.9), col = "red")
+```
+
+Como se trata de un test de dos colas el p-valor asociado será:
+
+```{r}
+if( dif <= 0){
+  p = 2 * pnorm(dif, mean = 0, sd = sqrt(sigma1^2 / n1 + sigma2^2 / n2))
+}else{
+  p = 2 *(1 - pnorm(dif, mean = 0, sd = sqrt(sigma1^2 / n1 + sigma2^2 / n2)))
+}
+p
+```
+
+Si obtenemos $p < \alpha$ entonces se rechaza la $H_0$. Además, podemos calcular un intervalo de confianza para la diferencia de medias:
+
+```{r}
+# Significancia
+a = 0.01
+# Calculamos el estadístico asociado al IC
+z = qnorm(1-a/2)
+# Calculamos el IC
+x1 = m1 - m2 - z * sqrt( sigma1^2 / n1 + sigma2 ^2 / n2 )
+x2 = m1 - m2 + z * sqrt( sigma1^2 / n1 + sigma2 ^2 / n2 )
+c(x1, x2)
+```
+
+## Desviaciones típicas $\sigma_1, \sigma_2$ desconocidas pero iguales
+Obtenemos una muestra de dos poblaciones normales:
+
+```{r}
+x1 = rnorm(100, mean = 15, sd = 2)
+x2 = rnorm(100, mean = 17, sd = 2)
+```
+
+Consideramos el siguiente test de hipótesis:
+
+$$ \begin{cases} H_0 : \, \mu_1 = \mu _2 \\
+H_a : \, \mu_1 \neq \mu _2
+\end{cases}$$
+
+Ahora utilizamos como estadístico:
+
+$$ T \sim \frac{(\bar{X_1} - \bar{X_2}) - (\mu_1 - \mu _2)}{\hat{S_p} \sqrt{1/n_1 + 1/n_2}}  $$
+
+
+```{r}
+# Media muestral
+m1 = mean(x1)
+m2 = mean(x2)
+# Tamaño muestral
+n1 = length(x1)
+n2 = length(x2)
+# Desviación típica muestral
+s1 = sd(x1)
+s2 = sd(x2)
+sp = sqrt( ( (n1-1)*s1^2 + (n2-1)*s2^2 ) / (n1+n2-2) )
+# Estadístico
+t = ( (m1 - m2) - (0) )/ ( sp * sqrt(1/n1 + 1/n2) )
+```
+
+Situación gráfica del estadístico:
+
+```{r}
+t_rango = seq(-7,7,by = 0.01)
+y = dt(t_rango, df = n1 + n2 - 2 )
+plot(t_rango,y, type = "l")
+lines(c(t,t),c(0,0.4), col = "red")
+lines(c(-t,-t),c(0,0.4), col = "red")
+```
+
+Como se trata de un test de dos colas el p-valor asociado será:
+
+```{r}
+if( t <= 0){
+  p = 2 * pt(t, df = n1 + n2 - 2)
+}else{
+  p = 2 *(1 - pt(t, df = n1 + n2 - 2))
+}
+p
+```
+
+Si obtenemos $p < \alpha$ entonces se rechaza la $H_0$. Además, podemos calcular un intervalo de confianza para la diferencia de medias:
+
+```{r}
+# Significancia
+a = 0.01
+# Calculamos el estadístico asociado al IC
+t = qt(1-a/2, df = n1 + n2 - 2)
+# Calculamos el IC
+I1 = m1 - m2 - t * sp * sqrt( 1/ n1 + 1 / n2 )
+I2 = m1 - m2 + t * sp * sqrt( 1 / n1 + 1 / n2 )
+c(I1, I2)
+```
+Con `t.test()`:
+
+```{r}
+t.test(x1,x2,var.equal = T, mu = 0, conf.level = 0.99)
+```
+
+## Desviaciones típicas $\sigma_1, \sigma_2$ desconocidas completamente
+Obtenemos una muestra de dos poblaciones normales:
+
+```{r}
+x1 = rnorm(100, mean = 15, sd = 2)
+x2 = rnorm(100, mean = 17, sd = 5)
+```
+
+Consideramos el siguiente test de hipótesis:
+
+$$ \begin{cases} H_0 : \, \mu_1 = \mu _2 \\
+H_a : \, \mu_1 \neq \mu _2
+\end{cases}$$
+
+Ahora utilizamos la corrección de Welch:
+
+```{r}
+t.test(x1,x2, mu = 0, conf.level = 0.99)
+```
+
+# Test de hipótesis sobre la varianza
+
+Obtenemos una muestra de una población normal $N(\mu = 15,\sigma ^2 = 2^2)$:
+
+```{r}
+x = rnorm(100, mean = 15, sd = 2)
+```
+
+Consideramos el siguiente test de hipótesis:
+
+$$ \begin{cases} H_0 : \, \sigma ^2 = 5 \\
+H_a : \, \sigma ^2 \neq 5
+\end{cases}$$
+
+Utilizamos como estadístico (mirar chuletario):
+
+$$ \chi^2 \sim \frac{(n-1)\hat{S}^2}{\sigma ^2} $$
+
+```{r}
+# Tamaño muestral
+n = length(x)
+# Varianza muestral
+s2 = var(x)
+# Estadístico
+x = (n-1) * s2 / 5
+```
+
+Situación gráfica del estadístico:
+
+```{r}
+x_rango = seq(0,500,by = 0.01)
+y = dchisq(x_rango, df = n-1 )
+plot(x_rango,y, type = "l")
+lines(c(x,x),c(0,0.03), col = "red")
+```
+
+Como se trata de un test de dos colas el p-valor asociado será:
+
+```{r}
+if( x <= n){
+  p = 2 * pchisq(x, n-1)
+}else{
+  p = 2 *(1 - pchisq(x, n-1))
+}
+p
+```
+
+# Test de hipótesis sobre las varianzas
+
+Obtenemos una muestra de una población normal $N(\mu = 15,\sigma ^2 = 2^2)$ y otra $N(\mu = 15,\sigma ^2 = 3^2)$:
+
+```{r}
+x1 = rnorm(100, mean = 15, sd = 2)
+x2 = rnorm(100, mean = 15, sd = 3)
+```
+
+Consideramos el siguiente test de hipótesis:
+
+$$ \begin{cases} H_0 : \, \sigma_1 ^2 = \sigma_2 ^2 \\
+H_a : \, \sigma_1 ^2 \neq \sigma_2 ^2
+\end{cases}$$
+
+Utilizamos como estadístico (mirar chuletario):
+
+$$ F \sim \frac{\hat{S}^2_1 / \sigma_1 ^2}{\hat{S}^2_2 / \sigma_2 ^2} $$
+
+```{r}
+# Tamaño muestral
+n1 = length(x1)
+n2 = length(x2)
+# Varianza muestral
+s21 = var(x1)
+s22 = var(x2)
+# Estadístico
+f = s21 / s22
+```
+
+Situación gráfica del estadístico:
+
+```{r}
+f_rango = seq(0,3,by = 0.01)
+y = df(f_rango, n1-1,n2-1 )
+plot(f_rango,y, type = "l")
+lines(c(f,f),c(0,2), col = "red")
+```
+
+Como se trata de un test de dos colas el p-valor asociado será:
+
+```{r}
+if( f <= 1){
+  p = 2 * pf(f, n1-1, n2-1)
+}else{
+  p = 2 *(1 - pf(f, n1-1, n2-1))
+}
+p
+```
+
+Con `var.test()`
+
+```{r}
+var.test(x1,x2)
+```
+

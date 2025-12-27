@@ -1,0 +1,440 @@
+---
+title: "Intervalos de confianza"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, out.width="50%", fig.align = "center")
+
+# Librerías (solo para último apartado opcional)
+library(DescTools)
+```
+
+## Introducción teórica.
+
+Dada una variable aleatoria $X$, diremos que una **muestra aleatoria simple** suya es una colección de variables aleatorias $(X_1 , \ldots , X_n)$ que son *independientes* e *identicamente distribuidas* como $X$.
+
+La **inferencia** estadística consiste en determinar parámetros $\hat{theta}$ (un número) de una distribución (por ejemplo, la media y varianza en una distribución normal) a partir de una m.a.s. (muestra aleatoria simple). En ese sentido, podemos optar por varios métodos.
+
+-   El *teorema del límite central* resulta de utilidad a la hora de estimar puntualmente la *esperanza* de una variable aleatoria.
+
+-   En general, para realizar estimaciones puntuales existen varios métodos, el más utilizado es el *método de máxima verosimilitud*.
+
+-   Otra opción para realizar estimaciones es indicar un **intervalo**, en el cual *puede* estar el parámetro que deseamos estimar.
+
+En todos esos métodos se utiliza un estadístico $\theta$ (una variable aleatoria) a partir del cual se infiere sobre los posibles valores del parámetro a estimar.
+
+Dada una variable aleatoria $X$ con un estadístico $\theta$, se dice que $I$ es un **intervalo de confianza** para $\hat{\theta}$ con una **significancia** $\alpha$ (o con un **nivel de confianza** $1-\alpha$) si: $$P(\theta \in I) = 1-\alpha$$
+
+El intervalo $I$ se suele presentar de dos posibles formas:
+
+-   Intervalo bilateral: $I = (a,b)$.
+
+-   Intervalo unilateral: $I = (a,\infty)$ o $I=(-\infty, a)$.
+
+## Estimación de la esperanza con varianza conocida.
+
+Sea $X$ una variable aleatoria con esperanza $\mu = E[X]$ y varianza $\sigma ^2 < \infty$. Si $(X_1 , \ldots , X_n)$ es una m.a.s., el *teorema del límite central* nos asegura que:
+
+$$ X_1 + \cdots + X_n \sim \mathcal{N} \left(n\mu , n \sigma ^2\right) $$
+
+Si dividimos entre $n$, teniendo en cuenta las propiedades de esperanza y varianza, entonces:
+
+$$ \overline{X} \sim \mathcal{N}\left( \mu , \frac{\sigma^2}{n} \right) $$
+
+Teniendo en cuenta que la media de $\overline{X}$ es $\mu$ y la desviación típica es $\frac{\sigma}{\sqrt{n}}$, si **tipificamos**:
+
+$$ \dfrac{\overline{X} - \mu }{\sigma / \sqrt{n}} \sim \mathcal{N}(0,1) $$
+
+Si consideramos el estadístico $\mu$ y despejamos, entonces:
+
+$$ \mu \sim \overline{X} - \frac{\sigma}{\sqrt{n}} Z $$
+
+De esa equivalencia se deduce que $\mu \in (x_- , x_+)$ con una significancia $\alpha$ siendo:
+
+$$ x_\pm = \overline{x} \mp \frac{\sigma}{\sqrt{n}} z_{\frac{\alpha}{2}} $$
+
+Siendo $z_a$ el $a$-cuantil de $\mathcal{N}(0,1)$.
+
+**Ejemplo**: Una variable aleatoria tiene media desconocida $\mu$ y varianza conocida $\sigma ^2 =156,25$. Si tomamos una muestra de $n=50$ con media muestral $\overline{x}=72,4$. Calcula el intervalo de confianza bilateral con una significancia del 5%.
+
+```{r}
+# Datos conocidos
+sd2 = 156.25
+sd = sqrt(sd2)
+m = 72.4
+n = 50
+a = 0.05
+
+# Calculamos los cuantiles
+z = qnorm(a/2)
+
+# Intervalo
+x1 = m + sd * z / sqrt(n)
+x2 = m - sd * z / sqrt(n)
+
+print(c(x1,x2))
+```
+
+**Suposiciones**: La variable sigue una distribución normal o la muestra es suficientemente grande para aplicar el TLC.
+
+También se puede calcular intervalos unilaterales: $\mu \in (x_- , \infty)$ con una significancia $\alpha$ siendo:
+
+$$ x_- = \overline{x} + \frac{\sigma}{\sqrt{n}} z_\alpha $$
+
+**Ejemplo**: En una universidad se ha tomado una *muestra* de alumnos a los cuales se les ha medido el CI. Calcula un intervalo de confianza unilateral considera que $\sigma = 15$ con una significancia del 5%.
+
+```{r}
+# Datos conocidos (obtenemos una muestra de la universidad)
+data = rnorm(200,100,15)
+
+# sd poblacional conocida
+sd = 15
+
+# Media muestral y tamaño muestra
+m = mean(data)
+n = length(data)
+
+# Significancia (error cometido)
+a = 0.05
+
+# Calculamos los cuantiles
+z = qnorm(a)
+
+# Intervalo
+x1 = m + sd * z / sqrt(n)
+
+print(c(x1,Inf))
+```
+
+**Suposiciones**: La variable sigue una distribución normal o la muestra es suficientemente grande para aplicar el TLC.
+
+En este ejercicio, el parámetro real es $\mu = 100$ y tratamos de obtener un intervalo en el que $\mu$ esté. Al tener una significancia del 5%, significa que el 5% de las veces que tomemos esa muestra en la universidad habremos cometido un error dando un intervalo que **no** contiene el parámetro, por ejemplo, el intervalo $(101,\infty)$.
+
+## Estimación de la media de una población normal.
+
+Sea $X$ una variable aleatoria normal de la cual desconocemos **todos** sus parámetros, el **teorema de Student** nos asegura que $\mu \in (x_- , x_+)$ con una significancia $\alpha$ siendo:
+
+$$ x_\pm = \overline{x} \mp \frac{\hat{s}}{\sqrt{n}} t_{\frac{\alpha}{2}} $$
+
+Dónde $t_{a}$ es el $a$-cuantil de la distribución $T_{n-1}$.
+
+**Ejemplo**: Tomamos una muestra de $n=50$ en una población normal con media muestral $\overline{x} = 72,4$ y desviación típica muestral $\hat{s} = 12,5$. Calcula el intervalo de confianza bilateral con una significancia del 5%.
+
+```{r}
+# Datos muestrales
+sd = 12.5
+m = 72.4
+n = 50
+a = 0.05
+
+# Calculamos los cuantiles
+t = qt(a/2,n-1)
+
+# Intervalo
+x1 = m + sd * t / sqrt(n)
+x2 = m - sd * t / sqrt(n)
+
+print(c(x1,x2))
+```
+
+**Suposiciones**: La población es normal.
+
+## Estimación de la varianza de una población normal.
+
+**Teorema**. Sea $X$ una variable aleatoria normal de la cual desconocemos **todos** sus parámetros, con una significancia $\alpha$ se obtiene el intervalo de confianza:
+
+$$ (n-1) \dfrac{\hat{s}^2}{\chi^2_{1-\frac{\alpha}{2},n-1}} \leq \sigma ^2 \leq (n-1) \dfrac{\hat{s}^2}{\chi^2_{\frac{\alpha}{2},n-1}} $$
+
+Dónde $\chi^2_{a,n-1}$ es el $a$-cuantil de la distribución $\chi ^2_{n-1}$.
+
+**Ejemplo**: En una escuela se toma una muestra de 16 estudiantes. La desviación típica muestral de sus alturas es $\hat{s} = 2,4$. Calcula el intervalo de confianza bilateral con una significancia del 5%.
+
+```{r}
+# Datos muestrales conocidos
+sd = 2.4
+n = 16
+
+# Significancia
+a = 0.05
+
+# Calculamos los cuantiles
+x1 = qchisq(1-a/2,n-1)
+x2 = qchisq(a/2,n-1)
+
+# Intervalo
+A = (n-1) * sd^2 / x1
+B = (n-1) * sd^2 / x2
+
+print(c(A,B))
+```
+
+**Suposiciones**: La población es normal.
+
+## Diferencia de medias. Varianzas conocidas.
+
+**Teorema**. Sean $X$ e $Y$ dos variables aleatorias con esperanzas $\mu_X, \, \mu_Y$ y varianzas conocidas $\sigma_X^2 , \sigma_Y^2 < \infty$. Entonces podemos afirmar que $\mu_X - \mu_Y \in (x_- , x_+)$ con una significancia $\alpha$ siendo:
+
+$$ x_\pm = \overline{x}_X - \overline{x}_Y \mp z_{\frac{\alpha}{2}} \sqrt{\frac{\sigma_X ^2}{n_X} + \frac{\sigma_Y ^2}{n_Y}} $$
+
+**Ejemplo**: En una universidad se estudia el CI de dos grados distintos. Para ello se ha tomado una muestra de 50 personas en el grado A obteniendo una media muestral de 120 y, otra muestra de 65 personas en el grado B resulta en una media muestral de 110. Teniendo en cuenta que la desviación poblacional del grado A es de 5 y en el grado B es de 3. Calcula el intervalo de confianza bilateral para la diferencia de medias con una significancia del 5%.
+
+```{r}
+# Datos muestrales conocidos
+n1 = 50
+m1 = 120
+n2 = 65
+m2 = 110
+a = 0.05
+
+# Datos poblacionales conocidos
+sigma1 = 5
+sigma2 = 3
+
+# Calculamos los cuantiles
+z = qnorm(a/2)
+
+# Intervalo
+A = m1 - m2 + z * sqrt(sigma1^2/n1 + sigma2^2/n2)
+B = m1 - m2 - z * sqrt(sigma1^2/n1 + sigma2^2/n2)
+
+print(c(A,B))
+```
+
+**Suposiciones**: Normalidad o muestra suficientemente grande para aplicar TLC.
+
+## Diferencia de medias. Varianzas iguales.
+
+**Teorema**. Sean $X$ e $Y$ dos variables aleatorias **normales** con esperanzas $\mu_X, \, \mu_Y$ y misma varianza $\sigma < \infty$. Entonces podemos afirmar que $\mu_X - \mu_Y \in (x_- , x_+)$ con una significancia $\alpha$ siendo:
+
+$$ x_\pm = \overline{x}_X - \overline{x}_Y \mp t_{\frac{\alpha}{2}} \hat{s}_{\text{pooled}}\sqrt{\frac{1}{n_X} + \frac{1}{n_Y}} $$
+
+Dónde $t_a$ es el $a$-cuantil de la distribución $T_{n_X + n_Y - 2}$ y $\hat{s}_{\text{pooled}} ^2 = \dfrac{(n_x -1)\hat{s}_x ^2 + (n_y -1)\hat{s}_y ^2}{n_x + n_y - 2}$
+
+**Ejemplo**: En una universidad se estudia el CI de dos grados distintos. Para ello se ha tomado una muestra de 50 personas en el grado A obteniendo una media muestral de 120 y una desviación muestral de 5 y, otra muestra de 65 personas en el grado B resulta en una media muestral de 110 y una desviación muestral de 3. Teniendo en cuenta que la desviación poblacional de ambos grados es la misma. Calcula el intervalo de confianza bilateral para la diferencia de medias con una significancia del 5%.
+
+```{r}
+# Datos muestrales conocidos
+n1 = 50
+m1 = 120
+sd1 = 5
+n2 = 65
+m2 = 110
+sd2 = 3
+a = 0.05
+
+# Calculamos los cuantiles
+t = qt(a/2,n1+n2-2)
+
+# Calculamos desviación agrupada
+sp = sqrt( ((n1-1)*sd1^2 + (n2-1)*sd2^2) / (n1 + n2 - 2) )
+
+# Intervalo
+A = m1 - m2 + t * sp * sqrt(1/n1 + 1/n2)
+B = m1 - m2 - t * sp * sqrt(1^2/n1 + 1/n2)
+
+print(c(A,B))
+```
+
+**Suposiciones**: Normalidad o muestra suficientemente grande para aplicar TLC.
+
+## Diferencia de medias. Varianzas completamente desconocidas.
+
+En el caso de que ambas poblaciones sean normales pero se desconozca por completo las varianzas (es decir, no se pueda asegurar que son iguales), es necesario aplicar la corrección de Welch, la cual será desarrollada en temas posteriores.
+
+## Ratio de varianzas.
+
+**Teorema**. Sean $X$ e $Y$ dos variables aleatorias **normales** con varianzas finitas. Entonces con una significancia $\alpha$ podemos calcular el intervalo de confianza como:
+
+$$ \frac{1}{f_{1-\frac{\alpha}{2}}} \cdot \frac{\hat{s}_x ^2}{\hat{s}_y ^2} \leq \frac{\sigma_x ^2}{\sigma_y ^2} \leq \frac{1}{f_{\frac{\alpha}{2}}} \cdot \frac{\hat{s}_x ^2}{\hat{s}_y ^2} $$
+
+Dónde $f_a$ es el $a$-cuantil de la distribución $F_{n_X -1,\, n_Y - 1}$.
+
+**Ejemplo**: En una empresa, se están comparando dos métodos de producción de cierto chip (A, mucho más barato, y B). La potencia media consumida por ambos chips es idéntica, si bien los dos métodos tienen distinta variabilidad. Se obtienen dos muestras de tamaño 16 y 10, sus varianzas muestrales son 24 y 18. Calcula un intervalo de confianza bilateral para la ratio de las varianzas con una significancia del 5%.
+
+```{r}
+# Datos muestrales conocidos
+n1 = 16
+v1 = 24
+n2 = 10
+v2 = 18
+a = 0.05
+
+# Calculamos los cuantiles
+f1 = qf(1-a/2,n1-1,n2-1)
+f2 = qf(a/2,n1-1,n2-1)
+
+# Intervalo
+A = v1 / v2 /f1
+B = v1 / v2 /f2
+
+print(c(A,B))
+```
+
+**Suposiciones**: Normalidad.
+
+## Media de una distribución de Poisson.
+
+**Teorema**. Sea $X \sim \mathcal{P}(\lambda)$. Entonces podemos afirmar que $\lambda \in (L_1 , L_2)$ con una significancia $\alpha$ siendo:
+
+$$ L_1 = \min\{ \lambda_1, \lambda_2 \} \text{ y } L_2 = \max\{ \lambda_1, \lambda_2 \} $$
+
+$$ \lambda _1 = \frac{1}{2n} \chi^2 _{\frac{\alpha}{2},2n\overline{x}} \text{  y  } \lambda _2 = \frac{1}{2n} \chi^2 _{1-\frac{\alpha}{2},2n\overline{x}+2} $$
+
+**Ejemplo**: En la liga de fútbol española se han recogido datos de goles marcados por un equipo. ¿Intervalo para el nº goles medio? Significancia del 5%.
+
+```{r}
+# Datos muestrales inventados
+muestra = rpois(200,1.3)
+
+# Media muestral y tamaño muestra
+m = mean(muestra)
+n = length(muestra)
+
+# Significancia (error cometido)
+a = 0.05
+
+# Calculamos los cuantiles
+x1 = qchisq(a/2,2*n*m)
+x2 = qchisq(1-a/2,2*n*m+2)
+
+# Intervalo
+L1 = x1 /(2*n)
+L2 = x2 /(2*n)
+
+print(c(L1,L2))
+```
+
+**Suposiciones**: Los datos siguen una distribución de Poisson.
+
+## Probabilidad en un evento de Bernoulli
+
+**Teorema**. Sea $X \sim Ber(p)$. Entonces podemos afirmar que $p \in (L_1 , L_2)$ con una significancia $\alpha$ siendo:
+
+$$ L_1 = \min\{ p_1, p_2 \} \text{ y } L_2 = \max\{ p_1, p_2 \} $$
+
+$$ p_1 = \dfrac{n\overline{x}F_{\frac{\alpha}{2};\,2n\overline{x},2(n-n\overline{x}+1)}}{(n-n\overline{x} + 1) + n\overline{x}F_{\frac{\alpha}{2};\,2n\overline{x},2(n-n\overline{x}+1)}} \text{  y  } p_2 = \dfrac{(n\overline{x} + 1)F_{1-\frac{\alpha}{2};\,2(n\overline{x}+1),2(n-n\overline{x})}}{(n-n\overline{x}) + (n\overline{x}+1)F_{1-\frac{\alpha}{2};\,2(n\overline{x}+1),2(n-n\overline{x})}} $$
+
+**Ejemplo**: Un amigo tuyo dice tener una moneda "trucada" pero no está seguro de conocer la probabilidad de cara en la moneda. Te decides a realizar 200 experimentos para estimar su probabilidad. ¿Intervalo para $p$? Significancia del 5%.
+
+```{r}
+# Datos muestrales inventados
+muestra = rbinom(200,1,0.75)
+
+# Media muestral y tamaño muestra
+m = mean(muestra)
+n = length(muestra)
+
+# Significancia 
+a = 0.05
+
+# Calculamos los cuantiles
+F1 = qf(a/2,2*n*m,2*(n-n*m+1))
+F2 = qf(1-a/2,2*(n*m+1),2*(n-n*m))
+
+# Intervalo
+p1 = n*m*F1/((n-n*m+1) + n*m*F1)
+p2 = (n*m+1)*F2/((n-n*m) + (n*m+1)*F2)
+
+print(c(p1,p2))
+```
+
+**Suposiciones**: El lanzamiento de moneda es un evendo de Bernoulli.
+
+**Ejemplo**: Durante los 60s-70s, se dieron casos de racismo en la elección de jurados populares. Supuestamente, la elección es al azar entre un listado de todos los ciudadanos. Sin embargo, se daban situaciones como que en una preselección de 80 posibles jurados solo 4 fuesen afroamericanos (de una población con un 50% de afroamericanos). Las autoridades se defendían diciendo que era pura casualidad. ¿Intervalo para $p=$ "prob. afroamericano"? Significancia del 5%.
+
+```{r}
+# Media muestral y tamaño muestra
+m = 4/80
+n = 80
+
+# Significancia 
+a = 0.05
+
+# Calculamos los cuantiles
+F1 = qf(a/2,2*n*m,2*(n-n*m+1))
+F2 = qf(1-a/2,2*(n*m+1),2*(n-n*m))
+
+# Intervalo
+p1 = n*m*F1/((n-n*m+1) + n*m*F1)
+p2 = (n*m+1)*F2/((n-n*m) + (n*m+1)*F2)
+
+print(c(p1,p2))
+```
+
+## Facilidades en los cálculos mediante funciones de R.
+
+Entre las funciones base de R se encuentran las funciones `t.test()`, `var.test()`, `binom.test()`, `prop.test()` y `poisson.test()`. Que resultan de gran utilidad a la hora de calcular intervalos de confianza a partir de una muestra de datos $x = (x_1 , \ldots, x_n)$. Sin embargo, el problema surge a la hora de calcular intervalos de confianza a partir de los estadísticos sin tener acceso al conjunto entero de datos. En ese caso, para poblaciones normales, haremos uso de la tipificación:
+
+$$ \dfrac{X-\mu}{\sigma} \sim \mathcal{N}(0,1) $$
+
+Generaremos datos al azar, que tipificaremos para asegurarnos tener una variable normal estándar y ajustaremos para obtener una muestra cuya media y varianza muestrales sean las que deseamos.
+
+**Ejemplo**: Genera una muestra aleatoria simple con media y desviación muestral 10 y 2 respectivamente.
+
+```{r}
+x = rnorm(1000)
+
+# Comprobamos media y desviación muestral
+mean(x)
+sd(x)
+
+# Tipificamos
+x = (x - mean(x)) / sd(x)
+
+# Comprobamos media y desviación muestral
+mean(x)
+sd(x)
+
+# Ajustamos a los datos requeridos
+x = x * 2 + 10
+
+# Comprobamos media y desviación muestral
+mean(x)
+sd(x)
+```
+
+Genera una función para generar una muestraa aleatoria simple de una distribución normal con un tamaño $n$ y una media y desviación muestral $\overline{x}$ y $\hat{s}$. Además prueba la función con $n = 1000$, $\overline{x} = 50$ y $\hat{s} = 3$.
+
+```{r}
+mas = function(n,m,s){
+  # Generamos muestra
+  x = rnorm(n)
+
+  # Tipificamos
+  x = (x - mean(x)) / sd(x)
+
+  # Ajustamos a los datos requeridos
+  x = x * s + m
+  
+  # Return
+  x
+}
+
+x = mas(1000,50,3)
+mean(x)
+sd(x)
+```
+
+## Contenido extra. Inferencia sobre variables multinomiales.
+
+La librería `DescTools` resulta de utilidad en la inferencia sobre variables multinomiales, veamos un ejemplo de utilización:
+
+```{r}
+# Generamos datos multinomiales en una pregunta con respuesta A/B/C/D
+respuesta = c(rep("A",40),rep("B",20),rep("C",30),rep("D",10))
+
+# Contamos
+x = table(respuesta)
+
+# Intervalos de confianza
+MultinomCI(x, conf.level = 0.99)
+```
+
+Otro ejemplo tomando una muestra con `rmultinom()`:
+
+```{r}
+n = 10000
+x = rmultinom(n,size = 1, prob = c(0.4, 0.2, 0.3, 0.1))
+MultinomCI(rowSums(x), conf.level = 0.99)
+```

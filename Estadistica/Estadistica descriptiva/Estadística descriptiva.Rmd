@@ -7,7 +7,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 # Librerías necesarias
-library("modeest")
+library(modeest)
 library(tidyverse)
 theme_set(theme_classic())
 ```
@@ -16,21 +16,21 @@ La estadística descriptiva es la encargada del análisis de los datos recopilad
 
 Partiendo de unos datos ordenados $x = (x_1 , \ldots , x_n)$ los principales parámetros de estudio son los siguientes:
 
-* La **media** se define como $\overline{x} = \dfrac{1}{n}\sum _{i=1} ^n x_i$.
+-   La **media** se define como $\overline{x} = \dfrac{1}{n}\sum _{i=1} ^n x_i$.
 
-* La **varianza** (*corregida*) se define como $\hat{s}^2 = \dfrac{1}{n-1}\sum _{i=1} ^n (x_i - \overline{x})^2$.
+-   La **varianza** (*corregida*) se define como $\hat{s}^2 = \dfrac{1}{n-1}\sum _{i=1} ^n (x_i - \overline{x})^2$.
 
-* La **desviación típica** (*corregida*) se define como $\hat{s} = \sqrt{\dfrac{1}{n-1}\sum _{i=1} ^n (x_i - \overline{x})^2}$.
+-   La **desviación típica** (*corregida*) se define como $\hat{s} = \sqrt{\dfrac{1}{n-1}\sum _{i=1} ^n (x_i - \overline{x})^2}$.
 
-* El **percentil $k\cdot 100 \%$** se define como $x_{i_0}$ con $i_0 = \lceil k\cdot n \rceil$.
+-   El **percentil** $k\cdot 100 \%$ se define como $x_{i_0}$ con $i_0 = \lceil k\cdot n \rceil$.
 
-* El **primer cuartil** es el percentil $25\%$.
+-   El **primer cuartil** es el percentil $25\%$.
 
-* La **mediana** es el percentil $50\%$.
+-   La **mediana** es el percentil $50\%$.
 
-* El **tercer cuartil** es el percentil $75\%$.
+-   El **tercer cuartil** es el percentil $75\%$.
 
-* Una **moda** es un valor $x_{i_0}$ más repetido.
+-   Una **moda** es un valor $x_{i_0}$ más repetido.
 
 En R se pueden calcular estos parámetros de la siguiente manera:
 
@@ -86,15 +86,13 @@ ggplot(data, aes(x = displ, y = hwy))+
 Realiza un gráfico de dispersión entre el número de cilindros y el consumo en carretera. ¿Observas algún problema?
 
 ```{r}
-ggplot(data, aes(x = cyl, y = hwy))+
-  geom_point() # Gráfico de dispersión
+ggplot(data, aes(x = cyl, y = hwy))+ geom_point() # Gráfico de dispersión
 ```
 
 Prueba a cambiar la capa `geom_point()` por `geom_boxplot()`:
 
 ```{r}
-ggplot(data, aes(x = cyl, y = hwy))+
-  geom_boxplot() # Capa en forma de boxplots
+ggplot(data, aes(x = cyl, y = hwy))+ geom_boxplot() # Capa en forma de boxplots
 ```
 
 ¿Observas algún problema? ¡Hay que factorizar la variable discreta!:
@@ -104,8 +102,7 @@ ggplot(data, aes(x = cyl, y = hwy))+
 data$cyl = as.factor(data$cyl)
 
 # Gráfica
-ggplot(data, aes(x = cyl, y = hwy))+
-  geom_boxplot()
+ggplot(data, aes(x = cyl, y = hwy))+ geom_boxplot()
 ```
 
 Ahora vamos a utilizar otro dataset para introducir otro tipo de capas en ggplot2:
