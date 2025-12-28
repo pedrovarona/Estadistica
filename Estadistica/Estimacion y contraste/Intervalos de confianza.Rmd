@@ -288,20 +288,21 @@ $$ \lambda _1 = \frac{1}{2n} \chi^2 _{\frac{\alpha}{2},2n\overline{x}} \text{  y
 muestra = rpois(200,1.3)
 
 # Media muestral y tamaño muestra
-# ?????
+n = length(muestra)
+m = mean(muestra)
 
 # Significancia (error cometido)
 a = 0.05
 
 # Calculamos los cuantiles
-#x1 = qchisq(????)
-#x2 = qchisq(????)
+x1 = qchisq(a/2, 2 * n * m)
+x2 = qchisq(1- a/2, 2*n*m+2)
 
 # Intervalo
-#L1 = ?????
-#L2 = ?????
+L1 = x1/(2*n)
+L2 = x2/(2*n)
 
-#print(c(L1,L2))
+print(c(L1,L2))
 ```
 
 **Suposiciones**: Los datos siguen una distribución de Poisson.
@@ -321,20 +322,21 @@ $$ p_1 = \dfrac{n\overline{x}F_{\frac{\alpha}{2};\,2n\overline{x},2(n-n\overline
 muestra = rbinom(200,1,0.75)
 
 # Media muestral y tamaño muestra
-# ?????
+n = length(muestra)
+m = mean(muestra)
 
 # Significancia 
 a = 0.05
 
 # Calculamos los cuantiles
-#F1 = ???????
-#F2 = ???????
+F1 = qf(a/2, 2 * n * m, 2*(n - n*m + 1))
+F2 = qf(1- a/2, 2 * (n * m + 1), 2*(n - n*m))
 
 # Intervalo
-#p1 = ???
-#p2 = ???
+p1 = n * m * F1 / ((n - n* m + 1) + n * m * F1)
+p2 = (n * m + 1) * F2 / ((n - n* m) + (n * m + 1) * F2)
 
-#print(c(p1,p2))
+print(c(p1,p2))
 ```
 
 **Suposiciones**: El lanzamiento de moneda es un evendo de Bernoulli.
