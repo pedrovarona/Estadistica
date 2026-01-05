@@ -20,13 +20,13 @@ library(readxl)
 
 Los test de hipótesis son una herramienta estadística que se utiliza para *demostrar* o *refutar* **estadísticamente** determinadas afirmaciones mediante el uso de inferencia sobre una muestra de datos. La forma de proceder es la siguiente:
 
-* Se formula una **hipótesis nula** $H_0$, esta sentencia es lo contrario a lo que pretendemos *demostrar* (**hipótesis alternativa** $H_a$).
+-   Se formula una **hipótesis nula** $H_0$, esta sentencia es lo contrario a lo que pretendemos *demostrar* (**hipótesis alternativa** $H_a$).
 
-* Consideramos un **estadístico de contraste** $T$ en relación con la hipótesis nula $H_0$.
+-   Consideramos un **estadístico de contraste** $T$ en relación con la hipótesis nula $H_0$.
 
-* Calculamos el **$p$-valor**: según $H_0$, calculamos la probabilidad de obtener un valor del estadístico como los datos de la muestra indican.
+-   Calculamos el $p$-valor: según $H_0$, calculamos la probabilidad de obtener un valor del estadístico como los datos de la muestra indican.
 
-* Si $p < \alpha$, entonces **rechazamos** $H_0$ en favor de $H_a$ con una significancia del $100\cdot\alpha \%$.
+-   Si $p < \alpha$, entonces **rechazamos** $H_0$ en favor de $H_a$ con una significancia del $100\cdot\alpha \%$.
 
 La significancia indica la probabilidad de equivocarnos al rechazar la hipótesis nula, pero existen más tipos de errores asociados a un test de hipótesis.
 
@@ -38,9 +38,9 @@ H_0 \text{ es rechazada} & \text{Error tipo I} & \checkmark \\
 H_0 \text{ no es rechazada} & \checkmark & \text{Error tipo II} \\ \hline
 \end{array}$$
 
-* La probabilidad de cometer un *falso positivo* (error de tipo I) se denota por $\alpha$ y se llama **confianza del test** a la probabilidad $1-\alpha$.
+-   La probabilidad de cometer un *falso positivo* (error de tipo I) se denota por $\alpha$ y se llama **confianza del test** a la probabilidad $1-\alpha$.
 
-* La probabilidad de cometer un *falso negativo* (error de tipo II) se denota por $\beta$ y se llama **potencia del test** a la probabilidad $1-\beta$.
+-   La probabilidad de cometer un *falso negativo* (error de tipo II) se denota por $\beta$ y se llama **potencia del test** a la probabilidad $1-\beta$.
 
 **Tamaño del efecto**. El tamaño del efecto en un test de hipótesis es una medida que indica la magnitud de la diferencia entre dos grupos o condiciones. A diferencia del valor p, que solo nos dice si la diferencia es estadísticamente significativa, el tamaño del efecto nos muestra cuán grande es esa diferencia. Existen varias formas de calcular el tamaño del efecto, dependiendo del tipo de datos y del test estadístico que se esté utilizando, puedes encontrar más información [aquí](https://imaging.mrc-cbu.cam.ac.uk/statswiki/FAQ/effectSize). El tamaño del efecto es importante porque nos ayuda a entender la relevancia práctica de los resultados. Por ejemplo, una diferencia puede ser estadísticamente significativa pero tener un tamaño del efecto muy pequeño, lo que podría indicar que la diferencia no es muy relevante en términos prácticos.
 
@@ -50,7 +50,7 @@ H_0 \text{ no es rechazada} & \checkmark & \text{Error tipo II} \\ \hline
 
 ### Test sobre la media de una población.
 
-Un producto homeopático afirma que "gracias a su uso, perderás 2kg en un mes". Escéptico ante esa afirmación, reclutas a 50 personas de tu ciudad para probar el producto, datos en "homeo_weight_loss.csv". Realiza un test de hipótesis (sin conocer la desviación típica poblacional). 
+Un producto homeopático afirma que "gracias a su uso, perderás 2kg en un mes". Escéptico ante esa afirmación, reclutas a 50 personas de tu ciudad para probar el producto, datos en "homeo_weight_loss.csv". Realiza un test de hipótesis (sin conocer la desviación típica poblacional).
 
 Para empezar, accede a los datos y representalos gráficamente como mejor consideres.
 
@@ -59,8 +59,8 @@ Para empezar, accede a los datos y representalos gráficamente como mejor consid
 data = read.csv("homeo_weight_loss.csv")
 
 # Representamos los datos
-ggplot(data, aes(x = ??????, y = after_stat(density)))+  
-	geom_histogram(bins = ??????, fill = "gray", colour = "black")+
+ggplot(data, aes(x = weight_loss_Kg, y = after_stat(density)))+  
+	geom_histogram(bins = 6, fill = "gray", colour = "black")+
   geom_density(lwd = 1)
 ```
 
@@ -69,11 +69,11 @@ Identifica tu hipótesis nula:
 $$ \begin{cases} H_0 : \mu = 2 \\
 H_a : \mu \neq 2\end{cases} $$
 
-Para este tipo de test, al desconocer la varianza, necesitamos hacer uso del estadístico $T$. Utiliza `t.test()` para realizar el test de hipótesis con una significancia del 5\%.
+Para este tipo de test, al desconocer la varianza, necesitamos hacer uso del estadístico $T$. Utiliza `t.test()` para realizar el test de hipótesis con una significancia del 5%.
 
 ```{r}
 # Realizamos un T-Test
-test = t.test(data$weight_loss_Kg, mu = ????, conf.level = 0.95)
+test = t.test(data$weight_loss_Kg, mu = 2, conf.level = 0.95)
 
 test
 ```
@@ -88,7 +88,8 @@ eff
 Calcula la potencia del test con `pwr.t.test()`:
 
 ```{r}
-pwr.t.test(n=?????, d = eff$Cohens_d, sig.level = ?????, type = "?????")
+pwr.t.test(n=50, d = eff$Cohens_d, sig.level = 0.05, type = "one")
+
 ```
 
 **Informe**. Observamos una normalidad en los datos, por lo que nos disponemos a realizar un test T de Student para contrastar la hipótesis nula de que la media es igual a $2$. Los resultados del T-test de dos colas sobre una muestra de $50$ sujetos evidencian un rechazo sobre la hipótesis nula con un tamaño del efecto mediano en la media de pérdida de peso [$t = -5.25$, $p<0.00001$, $d = 0.74$] con una potencia de $0.999$. De hecho, hemos obtenido el intervalo $(−0.71,0.79)$ para la media con una significancia de $0.05$.
@@ -104,7 +105,7 @@ Repetimos el test:
 
 ```{r}
 # Realizamos un T-Test
-test = t.test(data$weight_loss_Kg, mu = ?????, conf.level = 0.95, alternative = "?????")
+test = t.test(data$weight_loss_Kg, mu = 2, conf.level = 0.95, alternative = "less")
 test
 
 # Tamaño del efecto
@@ -112,7 +113,7 @@ eff = effectsize(test)
 eff
 
 #Potencia
-pwr.t.test(n=?????, d = eff$Cohens_d, sig.level = 0.05, type = "?????", alternative = "?????")
+pwr.t.test(n=50, d = eff$Cohens_d, sig.level = 0.05, type = "one", alternative = "less")
 ```
 
 **Informe**. Observamos una normalidad en los datos, por lo que nos disponemos a realizar un test T de Student para contrastar la hipótesis nula de que la media mayor o igual a $2$. Los resultados del T-test de dos colas sobre una muestra de $50$ sujetos evidencian un rechazo sobre la hipótesis nula con un tamaño del efecto mediano en la media de pérdida de peso [$t = -5.25$, $p<0.00001$, $d = 0.74$] con una potencia de $0.999$. De hecho, hemos obtenido el intervalo $(−\infty,0.66)$ para la media con una significancia de $0.05$.
@@ -121,7 +122,7 @@ pwr.t.test(n=?????, d = eff$Cohens_d, sig.level = 0.05, type = "?????", alternat
 
 ### Test sobre la varianza de una población.
 
-Los test de cociente intelectual (CI) están diseñados para que la desviación típica poblacional sea de 15 puntos. Sin embargo, en los procesos de traducción de un test "oficial" de CI pueden surgir desajustes. Por ejemplo, "iq_spanish.csv" tiene los resultados de un test de CI traducido del inglés al español. ¿Hay evidencia de que la desviación típica es distinta de 15 y, por tanto, debe revisarse la traducción? Usa un nivel de significación del 5\%.
+Los test de cociente intelectual (CI) están diseñados para que la desviación típica poblacional sea de 15 puntos. Sin embargo, en los procesos de traducción de un test "oficial" de CI pueden surgir desajustes. Por ejemplo, "iq_spanish.csv" tiene los resultados de un test de CI traducido del inglés al español. ¿Hay evidencia de que la desviación típica es distinta de 15 y, por tanto, debe revisarse la traducción? Usa un nivel de significación del 5%.
 
 ```{r}
 data = read.csv("iq_spanish.csv")
@@ -130,27 +131,28 @@ data = read.csv("iq_spanish.csv")
 Visualiza los datos:
 
 ```{r}
-ggplot(data, aes(x = ?????, y = after_stat(density)))+  
-	geom_histogram(bins = ?????, fill = "gray", colour = "black")+
+ggplot(data, aes(x = iq , y = after_stat(density)))+  
+	geom_histogram(bins = 8, fill = "gray", colour = "black")+
   geom_density(lwd = 1)
 ```
 
 Para realizar un test sobre la varianza no existe una función de R base, por lo que hay que utilziar la librería `EnvStats`:
 
 ```{r}
-test = varTest(data$iq, alternative = "?????", sigma.squared = ?????)
+test = varTest(data$iq, alternative = "two.sided", sigma.squared = 15^2)
 test
 ```
 
-**Conclusión**: La desviación típica no es 15 con una significancia del 5\%. Sin embargo, una significancia del 1\% no superaría el test y no podríamos obtener conclusiones, además no hemos podido realizar un informe completo inlcuyendo la potencia...
+**Conclusión**: La desviación típica no es 15 con una significancia del 5%. Sin embargo, una significancia del 1% no superaría el test y no podríamos obtener conclusiones, además no hemos podido realizar un informe completo inlcuyendo la potencia...
 
 Genera una simulación para estimar la potencia:
+
 ```{r}
 # Tamaño de la muestra
-n = ?????
+n = 1000
 
 # Suponemos H0 falsa y consideramos la desviación real *cercana* (ley de los grandes números) a la estimada puntualmente.
-sd_real = ?????
+sd_real = sqrt(test$estimate)
 
 # Simulaciones
 N = 5000
@@ -172,12 +174,13 @@ print(paste("Potencia:",1-beta))
 ```
 
 Prueba a cambiar $n$ hasta obtener una potencia del 90%:
+
 ```{r}
 # Tamaño de la muestra
-n = ?????
+n = 100
 
 # Suponemos H0 falsa y consideramos la desviación real *cercana* (ley de los grandes números) a la estimada puntualmente.
-sd_real = ?????
+sd_real = sqrt(test$estimate)
 
 # Simulaciones
 N = 5000
@@ -202,7 +205,7 @@ print(paste("Potencia:",1-beta))
 
 ### Cálculo del tamaño de una muestra.
 
-Según estadísticas oficiales, la media de peso de las mujeres de cierto país es de 63.5 Kg (con desviación típica 4.1). Sin embargo, un equipo de investigadores cree que debido a cambios en la alimentación la media se ha incrementado. ¿Cuántas muestras necesitarán para poder detectar un incremento de medio Kg con un nivel de significación del 1\% y una potencia del 90\%? Utiliza `power.t.test()` (para utilizar `pwr.t.test()` lo que se necesita es el tamaño del efecto)
+Según estadísticas oficiales, la media de peso de las mujeres de cierto país es de 63.5 Kg (con desviación típica 4.1). Sin embargo, un equipo de investigadores cree que debido a cambios en la alimentación la media se ha incrementado. ¿Cuántas muestras necesitarán para poder detectar un incremento de medio Kg con un nivel de significación del 1% y una potencia del 90%? Utiliza `power.t.test()` (para utilizar `pwr.t.test()` lo que se necesita es el tamaño del efecto)
 
 ```{r}
 power.t.test(
@@ -228,6 +231,7 @@ Plantea el test de hipótesis:
 $$ \begin{cases} H_0 : \, \mu _1 = \mu _2 \\ H_a : \, \mu _1 \neq \mu _2  \end{cases} $$
 
 Representa gráficamente los datos de cada muestra:
+
 ```{r}
 # ?????
 ```
@@ -241,6 +245,7 @@ Prueba a filtar por mayores de edad (`age` $\geq 18$).
 ```
 
 Desconocemos las varianzas por completo, así que utiliza un T-test con corrección de Welch (`var.equal = F` viene por defecto en el `t.test()`):
+
 ```{r}
 # Hombres ?????
 
@@ -251,12 +256,14 @@ test
 ```
 
 Calcula el tamaño del efecto:
+
 ```{r}
 eff = effectsize(test)
 eff
 ```
 
 Calcula la potencia (utiliza `pwr.t2n.test()`):
+
 ```{r}
 pwr.t2n.test(n1 = ?????,         # Tamaño muestra 1
              n2 = ?????,         # Tamaño muestra 2
@@ -281,7 +288,6 @@ $$ \begin{cases} H_0 : \, \mu _1 \geq \mu _2 \\ H_a : \, \mu _1 < \mu _2  \end{c
 
 Representa gráficamente los datos de cada muestra:
 
-
 ```{r}
 # ?????
 ```
@@ -300,17 +306,19 @@ test
 ```
 
 Calcula el tamaño del efecto.
+
 ```{r}
 eff = effectsize(test)
 eff
 ```
 
 Calcula la potencia.
+
 ```{r}
 pwr.t.test(n = 12, d = -0.55, sig.level = 0.05, type = "?????", alternative = "?????")
 ```
 
-¿Cuántos sujetos necesitamos para mejorar la potencia al 95\%?
+¿Cuántos sujetos necesitamos para mejorar la potencia al 95%?
 
 ```{r}
 pwr.t.test(power = 0.95, d = -0.55, sig.level = 0.05, type = "?????", alternative = "?????")
@@ -331,22 +339,22 @@ test = var.test(?????)
 test
 ```
 
-**Conclusión**. Si, hay evidencias al 5\% de significancia.
+**Conclusión**. Si, hay evidencias al 5% de significancia.
 
 ### Test de Poisson.
 
-Un experto deportivo te asegura que un determinado equipo de futbol marca de media 2 o más goles por partido. Realiza un test de hipótesis con los datos del año pasado "goles.csv" y una significancia del 5\%.
+Un experto deportivo te asegura que un determinado equipo de futbol marca de media 2 o más goles por partido. Realiza un test de hipótesis con los datos del año pasado "goles.csv" y una significancia del 5%.
 
 ```{r}
 data = read.csv("goles.csv")
 ```
-
 
 Plantea el test de hipótesis (considera que la variable `Goles` sigue una distribución de Poisson):
 
 $$ \begin{cases} H_0 : \, \lambda \geq 2 \\ H_a : \, \lambda < 2  \end{cases} $$
 
 Representa gráficamente los datos.
+
 ```{r}
 # Histograma y densidad
 ggplot(data, aes(x = ?????))+  
@@ -355,6 +363,7 @@ ggplot(data, aes(x = ?????))+
 ```
 
 Realiza un test de Poisson.
+
 ```{r}
 # Suma muestral ?????
 
@@ -370,19 +379,21 @@ test
 
 ### Test binomial (Bernoulli).
 
-En una selección al azar de jurados las autoridades afirman que la probabilidad de que un elegido sea afroamericano es de $p = 0.5$ (coincidiendo con la proporción de afroamericanos en la población). Dispuesto a rechazar dicha afirmación, decides recoger los datos obtenidos en un juicio relacionado con el racismo. Datos en "juicio.xlsx". Realiza un test de hipótesis con una significancia del 5\%.
+En una selección al azar de jurados las autoridades afirman que la probabilidad de que un elegido sea afroamericano es de $p = 0.5$ (coincidiendo con la proporción de afroamericanos en la población). Dispuesto a rechazar dicha afirmación, decides recoger los datos obtenidos en un juicio relacionado con el racismo. Datos en "juicio.xlsx". Realiza un test de hipótesis con una significancia del 5%.
 
 ```{r}
 data = read_excel("juicio.xlsx", col_names = c("nombre","afroamericano"))
 ```
 
 Representa gráficamente los datos.
+
 ```{r}
 ggplot(data, aes(x=afroamericano, fill = as.factor(afroamericano)))+    
 	geom_bar()
 ```
 
 Realiza un test de hipótesis.
+
 ```{r}
 # Suma muestral ?????
 
@@ -421,4 +432,4 @@ Realiza un test de proporciones.
 prop.test(c(suma1, suma2), c(n1, n2), alternative = "less")
 ```
 
-**Conclusión**. Si, la nueva página incrementa los clicks con una significancia del 5\% (pero no del 1\%).
+**Conclusión**. Si, la nueva página incrementa los clicks con una significancia del 5% (pero no del 1%).
