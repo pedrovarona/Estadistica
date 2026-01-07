@@ -124,3 +124,249 @@ power.t.test(sd = sqrt(10^(-5)), sig.level = 0.01, power = 0.9, delta = 0.003, t
 
 ```
 
+8.  Lavidamediadeunamuestrade100 l´amparasfluorescentesproducidaspor ciertacompa˜n´ıaesde
+1570horas. Siµes lavidamediadelas l´amparasproducidaspor lacompa˜n´ıa, testeasihaysuficiente
+Page2
+evidenciacomoparaconcluirqueµ̸=1600horasconunniveldesignificaci´onde(a)0.05y(b)0.01. (c)
+Calculaelp-valordel test.Puedesasumirqueladesviaci´onest´andarpoblacionalesde120horas.
+
+```{r}
+
+
+
+
+```
+
+9. Respectoal ejercicioanterior, ¿Cu´al esel tama˜node lamuestraquesenecesitar´ıaparadetectaruna
+variaci´onde30horasenlavidamediadelasl´amparas,usandounasignificaci´ondel1%yunapotencia
+del90%.
+
+```{r}
+
+
+
+
+```
+
+
+
+10.Unam´aquinaest´adise˜nadaparaa˜nadirde formaautom´aticapatatasasacosde10Kgconunavari
+anzade0.252Kg2. Sinembargo,unamuestraaleatoriade20sacosmuestraunavarianzamuestralde
+0.322Kg2. ¿Podemosconcluirqueel incrementoes significativoal (a)5%, (b)1%? Datosen“pota
+toes.csv”.
+
+```{r}
+# No encuentro el csv
+
+
+
+```
+
+2 ICsytestparadospoblacionesnormales
+
+
+
+11.Unamuestrade150bombillasdelamarcaAmostraronunaduraci´onmediade1400horasydesviaci´on
+t´ıpica120. Porotraparte,100bombillasde lamarcaBmostraronunaduraci´onmediade1200horas
+ydesviaci´ont´ıpica80. Hallael intervalode confianzadel 99%para ladiferenciademediasde las
+poblacionesAyB. Situviesesquecomprarunasbombillas,¿Cu´alescomprar´ıas?Datosen“bulbs.csv”.
+
+```{r}
+data = read.csv("bulbs.csv")
+n1 = 150
+x1 = 1400
+sd1 = 120
+n2 = 100
+x2 = 1200
+sd2 = 80
+alpha = 0.01
+t = qt(1-alpha/2, n1+n2-2)
+sp = sqrt(((n1-1) * (sd1)^2 + (n2-1) * (sd2)^2)/(n1 + n2 - 2))
+
+low = x1 - x2 - t * sp * sqrt((1/n1) + (1/n2))
+high = x1 - x2 + t * sp * sqrt((1/n1) + (1/n2))
+low
+high
+
+```
+
+12. Unamuestrade100bombillasdelamarcaAmostraronunaduraci´onmediade1300horasydesviaci´on
+t´ıpicade400horas.Porotraparte,150bombillasdelamarcaBmostraronunaduraci´onmediade1200
+horasydesviaci´ont´ıpicade200.Hallael intervalodeconfianzadel99%paraladiferenciademediasde
+laspoblacionesAyB. Si tuviesesquecomprarunasbombillas,¿Cu´alescomprar´ıas?
+
+
+```{r}
+n1 = 100
+x1 = 1300
+sd1 = 400
+
+n2=150
+x2=1200
+sd2=200
+alpha=0.01
+
+z = qnorm(1-alpha/2)
+
+low = x1 - x2 - z * sqrt(((sd1^2)/n1) + ((sd2^2)/n2))
+high = x1 - x2 + z * sqrt(((sd1^2)/n1) + ((sd2^2)/n2))
+low
+high
+
+
+```
+
+13. Enrelaci´onalproblemaanterior. Siquisi´esemoshacerunestudioconm´asmuestrasparapoderhablar
+deresultadossignificativos,¿cu´antasmuestrasser´ıannecesariassiqueremosunniveldesignificaci´ondel
+1%yunapotenciadel85%?.
+
+```{r}
+power.t.test(delta = 100, sd=400, sig.level = 0.01, power = 0.85, type= "two.sample", alternative = "two.sided")
+
+```
+
+14. Uningenieriocivildeseamedir laresistenciaalacompresi´ondedostiposdecemento, obteniendolas
+medidasrecogidasenelfichero“cement.csv”.Asumiendoqueambostiposdecementotienenlamisma
+varianza,¿hayevidenciasuficientecomoparaafirmarqueloscementosnotienelamismaresistenciaa
+lacompresi´on(conα=0.05)? ¿Cu´al esel tama˜nodel efecto? Si tevieses forzadoaelegirunode los
+cementos,¿qu´ecementoelegir´ıas?
+
+
+```{r}
+library("ggplot2")
+library("effectsize")
+data = read.csv("cement.csv")
+alpha = 0.05
+data$type = as.factor(data$type)
+
+ggplot(data, aes(x = compressive_strength, col=type)) + geom_density()
+
+
+a = data[data$type == 1, ]
+b = data[data$type == 2, ]
+test = t.test(a$compressive_strength, b$compressive_strength, var.equal = TRUE, conf.level = 0.95)
+effectsize(test)
+
+# P_valor es 0.06872, con akpha 0.05 no hay suficiente evidencia para decir que su resistencia sea diferente. Cohens d es 0.82 con ic al 95% y el intervalo jasjeaoeiqdq
+```
+
+15. Dosmuestrasdetama˜nos16y10setoman, usandomuestreoaleatorioconreemplazamiento, dedos
+poblacionesdistintas. Sisusvarianzasmuestralesson25.6y20,respectivamente.Hallalosintervalosal
+(a)98%y(b)90%paraelratiodevarianzas.
+
+
+```{r}
+# 98%
+n1 = 16
+n2 = 10
+var1 = 25.6
+var2 = 20
+alpha = 0.02
+qf1 = qf(1-alpha/2, n1-1, n2-1)
+qf2 = qf(alpha/2, n1-1, n2-1)
+
+low = (1*var1) / (qf1 * var2)
+high = (1*var1) / (qf2 * var2)
+low
+high
+
+
+#90%
+alpha = 0.1
+qf1 = qf(1-alpha/2, n1-1, n2-1)
+qf2 = qf(alpha/2, n1-1, n2-1)
+
+low = (1*var1) / (qf1 * var2)
+high = (1*var1) / (qf2 * var2)
+low
+high
+
+```
+
+
+16. Enunaproductoraagr´ıcolasedeseabaprobarelefectodeunfertilizanteenlaproducci´ondetrigo.Para
+ello, seeligieron24parcelasdetierraaproximadamenteigualesyseprob´oel fertilizanteenlamitadde
+ellas. El rendimientopromediodetrigoenlasparcelasnotratadas fuede4.8Kgconunadesviaci´on
+est´andarmuestralde0.42Kg,mientrasqueelrendimientopromedioenlasparcelastratadasfuede5.1
+Kgcondesviaci´onest´andarmuestralde0.37Kg. ¿Podemosconcluirquehayunamejorasignificativa
+enlaproducci´ondetrigodebidoal fertilizantesiseusaunniveldesignificaci´onde(a)1%,(b)5%?. (c)
+¿Cu´aleselp-valordel test?Puedesasumirquelasvarianzaspoblacionessoniguales.
+
+```{r}
+# NI GUARRA
+```
+
+
+
+17. SequiereestimarmedianteunIC(al95%)elcocientedelasvarianzasdedosr´ıos,parapoderconstruir
+unapresadonde estosdesembocan(piensaque si haymuchavariabilidaden los caucesde los r´ıos,
+debemostomarprecaucionesextraalahoradedise˜narlapresa;poresolavariabilidadesimportante).
+Datosendataics/rivers.csv.
+
+```{r}
+library(readr)
+data <- read_table("C:/Users/usuario/OneDrive - Fundación Universitaria San Pablo CEU/Escritorio/Ingenieria/Segundo Ingenieria/Estadistica Repitiendo/Estadistica/Estimacion y contraste/Ejercicios/rivers.csv")
+data$`"river"` = as.factor(data$`"river"`)
+
+a = data[data$`"river"` == "A", ]
+b = data[data$`"river"` == "B", ]
+
+t.test(a$`"flow"`, b$`"flow"`, var.equal = FALSE, conf.level = 0.95)
+
+
+# NI GUARRA ME FALLAN LOS DATOS
+```
+
+
+18. Seg´unlasespecificacionest´ecnicas, latensi´onalaquerompenloscablesdeunfabricantetienedemedia
+1800libras.Usandounanuevat´ecnicademanufacturaci´on,eldepartamentodeI+Dafirmaquelatensi´on
+derupturapuede incrementarse. Comoencargadode laspruebasdeverificaci´on, tomasunamuestra
+de50cables, encontr´andoseque latensi´onmediaderupturaesde1850libras(datosen“cables.csv”).
+¿Hayevidenciacomoparaapoyar laafirmaci´ondeldepartamentodeI+Dconunniveldesignificaci´on
+del1%? (Recuerdacalcularel tama˜nodelefecto?).
+
+
+```{r}
+data = read.csv("cables.csv")
+
+
+
+ggplot(data, aes(x = x)) + geom_histogram(bins = 15)
+# Normal
+
+test = t.test(x = data, alternative = "greater", mu = 1800, conf.level = 0.99)
+test
+# P valor = 0.0004597 por lo que si se incrementa la tension. Es mayor a 1815 libras. Con cohens D 0.5
+effectsize(test)
+```
+
+19. . SequiereestimarmedianteunICal99%, ladiferenciaentrelospesosmediosdeloscerebrosdelasvacas
+sanasyvacasenfermasporencefalopat´ıaespongiformebovina(enfermedadde lasvacas locas). Datos
+encows.csv. ¿Qu´econclusi´onpodr´ıasacarseacercadelospesosdeloscerebros?
+
+
+```{r}
+
+data = read.csv("cows.csv")
+data$healthy = as.factor(data$healthy)
+ggplot(data, aes(x = weight_grams, col = healthy))+ geom_density()
+
+# Normales
+
+a = data[data$healthy == TRUE, ]
+b = data[data$healthy == FALSE, ]
+
+t.test(a$weight_grams, b$weight_grams, conf.level = 0.99)
+
+# Pesos de cerebros independientes. Obtenemos el intervalo de confianza, no parece haber diferencias p_valor es alto.
+```
+
+20. Repite el ejercicio anterior si pudieses asumir que las desviaciones t´ıpicas poblaciones son id´enticas
+
+```{r}
+t.test(a$weight_grams, b$weight_grams, conf.level = 0.99, var.equal = TRUE)
+
+```
+
+
+
